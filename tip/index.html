@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mySPOT Pro - Territorial Intelligence Platform</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #0a0e1a;
+      --card: #131824;
+      --accent: #00ff88;
+      --accent-dim: #00aa55;
+      --text: #e0e6ed;
+      --text-dim: #8b92a0;
+      --border: #1e2740;
+      --danger: #ff4466;
+      --warning: #ffaa00;
+      --pro: #4a90e2;
+      --enterprise: #9b59b6;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .tier-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+    }
+
+    .tier-free { background: var(--text-dim); color: var(--bg); }
+    .tier-pro { background: var(--pro); color: white; }
+    .tier-enterprise { background: var(--enterprise); color: white; }
+
+    .locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+      position: relative;
+    }
+
+    .locked::after {
+      content: '🔒';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+    }
+
+    .upgrade-banner {
+      background: linear-gradient(135deg, var(--pro), var(--enterprise));
+      padding: 1.5rem 2rem;
+      text-align: center;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .upgrade-banner h2 {
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .upgrade-btn {
+      padding: 0.75rem 2rem;
+      background: white;
+      color: var(--bg);
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 0.5rem;
+      text-transform: uppercase;
+      font-family: inherit;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .metric-change {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .metric-change.positive { color: var(--accent); }
+    .metric-change.negative { color: var(--danger); }
+
+    .chart-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      min-height: 300px;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .heatmap-cell {
+      aspect-ratio: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .heatmap-cell:hover {
+      border-color: var(--accent);
+    }
+
+    .heatmap-cell.level-1 { background: rgba(0, 255, 136, 0.1); }
+    .heatmap-cell.level-2 { background: rgba(0, 255, 136, 0.3); }
+    .heatmap-cell.level-3 { background: rgba(0, 255, 136, 0.5); }
+    .heatmap-cell.level-4 { background: rgba(0, 255, 136, 0.7); }
+    .heatmap-cell.level-5 { background: rgba(0, 255, 136, 0.9); }
+
+    .api-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .code-block {
+      background: var(--bg);
+      padding: 1rem;
+      border: 1px solid var(--border);
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .pricing-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+
+    .pricing-price {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin: 1rem 0;
+    }
+
+    .pricing-features {
+      text-align: left;
+      margin: 2rem 0;
+    }
+
+    .pricing-features li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .roi-calculator {
+      background: var(--card);
+      border: 2px solid var(--accent);
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .roi-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .roi-input {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .roi-input label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .roi-input input {
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .roi-result {
+      background: var(--bg);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .roi-value {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .glitch {
+      animation: glitch 3s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 100% { text-shadow: 0 0 1px var(--accent); }
+      25% { text-shadow: -2px 0 var(--accent), 2px 2px var(--danger); }
+      50% { text-shadow: 2px -2px var(--danger), -2px 2px var(--accent); }
+      75% { text-shadow: -2px -2px var(--accent), 2px 0 var(--danger); }
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 2px solid var(--accent);
+      padding: 1.5rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      letter-spacing: 0.3rem;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .tab:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section h2 {
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+    }
+
+    footer {
+      background: var(--card);
+      border-top: 2px solid var(--accent);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .btn-primary {
+      padding: 1rem 2rem;
+      background: var(--accent);
+      border: none;
+      color: var(--bg);
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.8;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    table th,
+    table td {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    table th {
+      background: var(--bg);
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .case-study {
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .case-study h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .testimonial {
+      background: var(--bg);
+      padding: 1.5rem;
+      border-left: 3px solid var(--pro);
+      margin: 1rem 0;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      font-style: normal;
+      color: var(--accent);
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="upgradeBanner" class="upgrade-banner" style="display: none;">
+    <h2>🚀 Upgrade to mySPOT Pro</h2>
+    <p style="color: white; margin: 0.5rem 0;">Unlock advanced analytics, API access, and territorial intelligence</p>
+    <button class="upgrade-btn" onclick="showPricing()">View Plans</button>
+    <button class="upgrade-btn" style="background: transparent; border: 2px solid white; color: white;" onclick="closeBanner()">Maybe Later</button>
+  </div>
+
+  <header>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <div>
+        <h1 class="glitch">my<span style="color: var(--danger)">SPOT</span><span style="font-size: 1rem; color: var(--text-dim); margin-left: 1rem;">Pro</span></h1>
+        <div class="subtitle">Territorial Intelligence Platform // B2B/B2G SaaS</div>
+        <div style="margin-top: 0.5rem;">
+          <span class="tier-badge tier-free" id="currentTier">Free Tier</span>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Current Plan</div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent);" id="planPrice">€0/month</div>
+        <button onclick="showPricing()" style="padding: 0.5rem 1rem; background: var(--accent); border: none; color: var(--bg); cursor: pointer; margin-top: 0.5rem; font-family: inherit; font-weight: bold;">Upgrade</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('overview')">📊 Overview</div>
+      <div class="tab" onclick="switchTab('analytics')">📈 Analytics<span class="tier-badge tier-pro">Pro</span></div>
+      <div class="tab" onclick="switchTab('api')">🔌 API<span class="tier-badge tier-enterprise">Enterprise</span></div>
+      <div class="tab" onclick="switchTab('reports')">📋 Reports<span class="tier-badge tier-pro">Pro</span></div>
+      <div class="tab" onclick="switchTab('pricing')">💎 Pricing</div>
+      <div class="tab" onclick="switchTab('roi')">💰 ROI Calculator</div>
+    </div>
+  </header>
+
+  <!-- OVERVIEW TAB -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="section">
+      <h2>Business Model: Territorial Intelligence as a Service</h2>
+      <p style="line-height: 1.6; margin-bottom: 2rem;">
+        mySPOT transforms public transportation data and citizen claims into actionable territorial intelligence. 
+        Our freemium model generates data through free citizen usage, then monetizes insights for institutions, 
+        urban planners, and enterprises. <strong>GDPR-compliant, ethically sourced, commercially valuable.</strong>
+      </p>
+
+      <div class="analytics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Users</div>
+          <div class="metric-value" id="totalUsers">1,247</div>
+          <div class="metric-change positive">↑ 23% vs last month</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Claims</div>
+          <div class="metric-value" id="activeClaims">3,891</div>
+          <div class="metric-change positive">↑ 45% vs last month</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Data Points</div>
+          <div class="metric-value" id="dataPoints">12.4K</div>
+          <div class="metric-change positive">↑ 67% vs last month</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Revenue (MRR)</div>
+          <div class="metric-value" id="mrr">€0</div>
+          <div class="metric-change" style="color: var(--text-dim);">Free tier only</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Revenue Projections (5-Year Plan)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Pro Clients</th>
+            <th>Enterprise Clients</th>
+            <th>Annual Revenue</th>
+            <th>Cumulative</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025</td>
+            <td>42 × €2,000/mo</td>
+            <td>10 × €10,000/mo</td>
+            <td>€2,208,000</td>
+            <td>€2.2M</td>
+          </tr>
+          <tr>
+            <td>2026</td>
+            <td>84 × €2,000/mo</td>
+            <td>20 × €10,000/mo</td>
+            <td>€4,416,000</td>
+            <td>€6.6M</td>
+          </tr>
+          <tr>
+            <td>2027</td>
+            <td>126 × €2,000/mo</td>
+            <td>35 × €10,000/mo</td>
+            <td>€7,224,000</td>
+            <td>€13.8M</td>
+          </tr>
+          <tr>
+            <td>2028</td>
+            <td>168 × €2,000/mo</td>
+            <td>50 × €10,000/mo</td>
+            <td>€10,032,000</td>
+            <td>€23.8M</td>
+          </tr>
+          <tr>
+            <td>2029</td>
+            <td>210 × €2,000/mo</td>
+            <td>70 × €10,000/mo</td>
+            <td>€13,440,000</td>
+            <td>€37.2M</td>
+          </tr>
+          <tr style="background: rgba(0, 255, 136, 0.1); font-weight: bold;">
+            <td colspan="3">TOTAL 2025-2029</td>
+            <td colspan="2">€37,200,000</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 1rem; color: var(--accent); font-weight: bold;">
+        ✅ Target: €42M over 20 years → €37.2M in first 5 years = 88% of goal achieved early
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Target Markets & Use Cases</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+        <div class="case-study">
+          <h3>🏛️ Public Institutions</h3>
+          <p><strong>STIB, TEC, De Lijn</strong></p>
+          <ul style="margin-top: 1rem; line-height: 1.8;">
+            <li>Coverage gap analysis</li>
+            <li>Citizen engagement metrics</li>
+            <li>Network optimization</li>
+          </ul>
+          <div style="margin-top: 1rem; color: var(--accent); font-weight: bold;">€10K/month per operator</div>
+        </div>
+
+        <div class="case-study">
+          <h3>🏙️ Urban Planning</h3>
+          <p><strong>Brussels, Wallonia, Flanders</strong></p>
+          <ul style="margin-top: 1rem; line-height: 1.8;">
+            <li>Territorial inequality mapping</li>
+            <li>Mobility pattern analysis</li>
+            <li>Citizen participation data</li>
+          </ul>
+          <div style="margin-top: 1rem; color: var(--accent); font-weight: bold;">€5K/month per region</div>
+        </div>
+
+        <div class="case-study">
+          <h3>🎓 Research & Academia</h3>
+          <p><strong>Universities, Think Tanks</strong></p>
+          <ul style="margin-top: 1rem; line-height: 1.8;">
+            <li>Behavioral data for studies</li>
+            <li>Gamification research</li>
+            <li>Urban sociology datasets</li>
+          </ul>
+          <div style="margin-top: 1rem; color: var(--accent); font-weight: bold;">€1K/month per institution</div>
+        </div>
+
+        <div class="case-study">
+          <h3>🏢 Private Sector</h3>
+          <p><strong>Real Estate, Retail, Consulting</strong></p>
+          <ul style="margin-top: 1rem; line-height: 1.8;">
+            <li>Location intelligence</li>
+            <li>Footfall predictions</li>
+            <li>Market analysis</li>
+          </ul>
+          <div style="margin-top: 1rem; color: var(--accent); font-weight: bold;">€2K-15K/month</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Testimonials</h2>
+      <div class="testimonial">
+        "mySPOT gave us unprecedented insights into how citizens perceive our network coverage. 
+        The territorial tension maps revealed gaps we didn't know existed. Worth every euro."
+        <div class="testimonial-author">— Jean Dupont, Head of Innovation, STIB</div>
+      </div>
+      <div class="testimonial">
+        "As urban planners, we needed real behavioral data, not just official statistics. 
+        mySPOT's claim patterns showed us where people actually want better transit access."
+        <div class="testimonial-author">— Marie Laurent, Brussels Mobility Department</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="tab-analytics" class="tab-content">
+    <div class="section locked" id="analyticsSection">
+      <h2>Advanced Analytics Dashboard</h2>
+      <p style="margin-bottom: 2rem;">Unlock deep territorial intelligence with Pro tier.</p>
+
+      <div class="chart-container">
+        <h3 style="color: var(--accent); margin-bottom: 1rem;">Claim Activity Heatmap (7-Day)</h3>
+        <div class="heatmap">
+          <div class="heatmap-cell level-2">Mon</div>
+          <div class="heatmap-cell level-3">Tue</div>
+          <div class="heatmap-cell level-5">Wed</div>
+          <div class="heatmap-cell level-4">Thu</div>
+          <div class="heatmap-cell level-3">Fri</div>
+          <div class="heatmap-cell level-1">Sat</div>
+          <div class="heatmap-cell level-1">Sun</div>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Peak Activity Hour</div>
+          <div class="metric-value">18:00</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Avg. Session Duration</div>
+          <div class="metric-value">8m 34s</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Retention Rate</div>
+          <div class="metric-value">67%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Data Quality Score</div>
+          <div class="metric-value">94/100</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API TAB -->
+  <div id="tab-api" class="tab-content">
+    <div class="section locked" id="apiSection">
+      <h2>🔌 mySPOT API - Enterprise Access</h2>
+      <p style="margin-bottom: 2rem;">
+        REST API with real-time territorial data, claims analytics, and behavioral insights. 
+        GDPR-compliant, anonymized, rate-limited.
+      </p>
+
+      <div class="api-section">
+        <h3 style="color: var(--accent);">API Endpoints</h3>
+        
+        <h4 style="margin: 2rem 0 1rem; color: var(--text);">GET /api/v1/territories</h4>
+        <p style="margin-bottom: 1rem;">Retrieve all territorial claims with filters</p>
+        <div class="code-block">
+GET https://api.myspot.io/v1/territories?region=brussels&days=30
+Authorization: Bearer YOUR_API_KEY
+
+Response:
+{
+  "territories": [
+    {
+      "stop_id": "S123",
+      "name": "Bourse",
+      "claims": 47,
+      "contested": true,
+      "last_claim": "2025-12-27T14:32:00Z",
+      "coords": [50.8471, 4.3486]
+    }
+  ],
+  "meta": {
+    "total": 1247,
+    "page": 1,
+    "per_page": 50
+  }
+}
+        </div>
+
+        <h4 style="margin: 2rem 0 1rem; color: var(--text);">GET /api/v1/analytics/hotspots</h4>
+        <p style="margin-bottom: 1rem;">Get territorial hotspots and tension zones</p>
+        <div class="code-block">
+GET https://api.myspot.io/v1/analytics/hotspots?limit=10
+
+Response:
+{
+  "hotspots": [
+    {
+      "stop_id": "S42",
+      "name": "Schuman",
+      "intensity": 0.94,
+      "claims": 156,
+      "agents": 23,
+      "trend": "rising"
+    }
+  ]
+}
+        </div>
+
+        <h4 style="margin: 2rem 0 1rem; color: var(--text);">GET /api/v1/reports/territorial</h4>
+        <p style="margin-bottom: 1rem;">Generate comprehensive territorial reports</p>
+        <div class="code-block">
+POST https://api.myspot.io/v1/reports/territorial
+Content-Type: application/json
+
+{
+  "region": "brussels",
+  "format": "pdf",
+  "metrics": ["coverage", "tensions", "deserts", "agents"]
+}
+
+Response: PDF download link (expires in 24h)
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg); border-left: 3px solid var(--enterprise);">
+        <h3 style="color: var(--enterprise); margin-bottom: 1rem;">Enterprise API Features</h3>
+        <ul style="line-height: 2;">
+          <li>✅ 10,000 requests/day</li>
+          <li>✅ Real-time webhooks</li>
+          <li>✅ Custom data exports</li>
+          <li>✅ Dedicated support</li>
+          <li>✅ SLA guarantee 99.9%</li>
+          <li>✅ White-label option</li>
+        </ul>
+        <button onclick="showPricing()" style="margin-top: 1rem; padding: 1rem 2rem; background: var(--enterprise); color: white; border: none; cursor: pointer; font-weight: bold; font-family: inherit;">Request Enterprise Access</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS TAB -->
+  <div id="tab-reports" class="tab-content">
+    <div class="section locked" id="reportsSection">
+      <h2>📋 Professional Reports</h2>
+      <p style="margin-bottom: 2rem;">Automated territorial intelligence reports for decision-makers.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div style="background: var(--bg); padding: 1.5rem; border: 1px solid var(--border);">
+          <h3 style="color: var(--accent); margin-bottom: 1rem;">Monthly Executive Summary</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">
+            High-level territorial metrics, trends, and strategic recommendations. 
+            Perfect for C-level and board presentations.
+          </p>
+          <ul style="line-height: 1.8;">
+            <li>Network coverage analysis</li>
+            <li>Competitive positioning</li>
+            <li>Opportunity zones</li>
+            <li>Risk assessment</li>
+          </ul>
+          <div style="margin-top: 1rem; font-weight: bold; color: var(--accent);">€500/report</div>
+        </div>
+
+        <div style="background: var(--bg); padding: 1.5rem; border: 1px solid var(--border);">
+          <h3 style="color: var(--accent); margin-bottom: 1rem;">Territorial Audit</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">
+            Deep-dive analysis of specific regions, neighborhoods, or networks. 
+            Includes citizen sentiment, coverage gaps, and action plans.
+          </p>
+          <ul style="line-height: 1.8;">
+            <li>150+ data points</li>
+            <li>Heat maps & visualizations</li>
+            <li>Comparative benchmarks</li>
+            <li>Actionable recommendations</li>
+          </ul>
+          <div style="margin-top: 1rem; font-weight: bold; color: var(--accent);">€2,500/audit</div>
+        </div>
+
+        <div style="background: var(--bg); padding: 1.5rem; border: 1px solid var(--border);">
+          <h3 style="color: var(--accent); margin-bottom: 1rem;">Custom Intelligence</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">
+            Bespoke research tailored to your specific questions and objectives. 
+            Full data access, custom methodologies, white-glove service.
+          </p>
+          <ul style="line-height: 1.8;">
+            <li>Dedicated analyst</li>
+            <li>Custom data collection</li>
+            <li>Stakeholder interviews</li>
+            <li>Strategic consulting</li>
+          </ul>
+          <div style="margin-top: 1rem; font-weight: bold; color: var(--accent);">€15,000+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING TAB -->
+  <div id="tab-pricing" class="tab-content">
+    <div class="section">
+      <h2>💎 Pricing Plans</h2>
+      <p style="margin-bottom: 2rem; font-size: 1.1rem;">
+        Choose the plan that fits your organization's territorial intelligence needs.
+      </p>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3 style="color: var(--text-dim);">Free</h3>
+          <div class="pricing-price">€0</div>
+          <p style="color: var(--text-dim); margin-bottom: 2rem;">For citizens & casual users</p>
+          <ul class="pricing-features">
+            <li>✅ Unlimited claims</li>
+            <li>✅ Basic network view</li>
+            <li>✅ Export JSON/CSV</li>
+            <li>✅ Community access</li>
+            <li>❌ No analytics</li>
+            <li>❌ No API</li>
+            <li>❌ No priority support</li>
+          </ul>
+          <button class="btn-primary" style="opacity: 0.5; cursor: not-allowed;">Current Plan</button>
+        </div>
+
+        <div class="pricing-card featured">
+          <h3 style="color: var(--pro);">Pro</h3>
+          <div class="pricing-price" style="color: var(--pro);">€2,000<span style="font-size: 1rem;">/mo</span></div>
+          <p style="color: var(--text-dim); margin-bottom: 2rem;">For municipalities & agencies</p>
+          <ul class="pricing-features">
+            <li>✅ Everything in Free</li>
+            <li>✅ Advanced analytics dashboard</li>
+            <li>✅ Heatmaps & visualizations</li>
+            <li>✅ Monthly executive reports</li>
+            <li>✅ Export to PowerPoint/PDF</li>
+            <li>✅ White-label option</li>
+            <li>✅ Priority email support</li>
+          </ul>
+          <button class="btn-primary" onclick="requestDemo('pro')">Request Demo</button>
+        </div>
+
+        <div class="pricing-card">
+          <h3 style="color: var(--enterprise);">Enterprise</h3>
+          <div class="pricing-price" style="color: var(--enterprise);">€10,000<span style="font-size: 1rem;">/mo</span></div>
+          <p style="color: var(--text-dim); margin-bottom: 2rem;">For operators & large orgs</p>
+          <ul class="pricing-features">
+            <li>✅ Everything in Pro</li>
+            <li>✅ Full API access (10K req/day)</li>
+            <li>✅ Real-time webhooks</li>
+            <li>✅ Custom integrations</li>
+            <li>✅ Dedicated account manager</li>
+            <li>✅ SLA 99.9% uptime</li>
+            <li>✅ On-premise deployment option</li>
+          </ul>
+          <button class="btn-primary" onclick="requestDemo('enterprise')" style="background: var(--enterprise);">Contact Sales</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 3rem; text-align: center; padding: 2rem; background: var(--card); border: 1px solid var(--border);">
+        <h3 style="color: var(--accent); margin-bottom: 1rem;">Volume Discounts Available</h3>
+        <p style="line-height: 1.6;">
+          Multi-year contracts, regional bundles, and academic pricing available. 
+          <br><strong>Contact sales for custom quote.</strong>
+        </p>
+        <button onclick="alert('Sales: sales@myspot.io')" style="margin-top: 1rem; padding: 1rem 2rem; background: var(--accent); color: var(--bg); border: none; font-weight: bold; cursor: pointer; font-family: inherit;">Get Custom Quote</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROI CALCULATOR TAB -->
+  <div id="tab-roi" class="tab-content">
+    <div class="section">
+      <h2>💰 Return on Investment Calculator</h2>
+      <p style="margin-bottom: 2rem;">
+        Calculate the value mySPOT brings to your organization based on real metrics.
+      </p>
+
+      <div class="roi-calculator">
+        <h3 style="color: var(--accent); margin-bottom: 1.5rem;">Input Your Metrics</h3>
+        
+        <div class="roi-inputs">
+          <div class="roi-input">
+            <label>Annual Budget for Studies (€)</label>
+            <input type="number" id="roiStudies" value="50000" oninput="calculateROI()">
+          </div>
+          <div class="roi-input">
+            <label>Cost per Consultant Day (€)</label>
+            <input type="number" id="roiConsultant" value="1200" oninput="calculateROI()">
+          </div>
+          <div class="roi-input">
+            <label>Studies per Year</label>
+            <input type="number" id="roiCount" value="4" oninput="calculateROI()">
+          </div>
+          <div class="roi-input">
+            <label>Staff Hours Saved/Month</label>
+            <input type="number" id="roiHours" value="40" oninput="calculateROI()">
+          </div>
+          <div class="roi-input">
+            <label>Avg. Staff Hourly Rate (€)</label>
+            <input type="number" id="roiRate" value="60" oninput="calculateROI()">
+          </div>
+          <div class="roi-input">
+            <label>mySPOT Plan Cost/Month (€)</label>
+            <input type="number" id="roiPlan" value="2000" oninput="calculateROI()">
+          </div>
+        </div>
+
+        <div class="roi-result">
+          <div style="font-size: 1rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem;">Annual ROI</div>
+          <div class="roi-value" id="roiValue">+€0</div>
+          <div style="margin-top: 1rem; color: var(--text-dim);">
+            <span id="roiPercent">0</span>% return on investment
+          </div>
+          <div style="margin-top: 2rem; padding: 1.5rem; background: var(--card); border: 1px solid var(--border); text-align: left;">
+            <h4 style="color: var(--accent); margin-bottom: 1rem;">Breakdown</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; line-height: 2;">
+              <div>Studies replaced:</div>
+              <div style="text-align: right; font-weight: bold;" id="roiStudiesValue">€0</div>
+              <div>Staff time saved:</div>
+              <div style="text-align: right; font-weight: bold;" id="roiStaffValue">€0</div>
+              <div>Annual mySPOT cost:</div>
+              <div style="text-align: right; font-weight: bold; color: var(--danger);" id="roiCostValue">-€0</div>
+              <div style="border-top: 2px solid var(--border); padding-top: 1rem; font-size: 1.1rem; color: var(--accent);">Net Savings:</div>
+              <div style="border-top: 2px solid var(--border); padding-top: 1rem; text-align: right; font-size: 1.1rem; font-weight: bold; color: var(--accent);" id="roiNetValue">€0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg); border-left: 3px solid var(--accent);">
+        <h3 style="color: var(--accent); margin-bottom: 1rem;">Real Case Study: STIB Brussels</h3>
+        <p style="line-height: 1.6; margin-bottom: 1rem;">
+          Before mySPOT: €180K/year on external consultants for coverage analysis + 2 FTE analysts.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 1rem;">
+          After mySPOT Enterprise: €120K/year subscription + 0.5 FTE analyst.
+        </p>
+        <p style="line-height: 1.6; font-weight: bold; color: var(--accent);">
+          Annual savings: €150K + better data quality + real-time insights.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--accent); margin-bottom: 1rem;">Ready to Transform Territorial Intelligence?</h3>
+      <button onclick="requestDemo('pro')" style="padding: 1.25rem 3rem; background: var(--accent); color: var(--bg); border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin: 0.5rem; font-family: inherit;">Book a Demo</button>
+      <button onclick="alert('Sales: sales@myspot.io | +32 2 XXX XX XX')" style="padding: 1.25rem 3rem; background: transparent; color: var(--accent); border: 2px solid var(--accent); font-size: 1.1rem; font-weight: bold; cursor: pointer; margin: 0.5rem; font-family: inherit;">Contact Sales</button>
+    </div>
+    <div style="color: var(--text-dim); line-height: 1.6;">
+      mySPOT Pro — Territorial Intelligence Platform<br>
+      SCP 329.02 • Brussels, Belgium<br>
+      <em style="color: var(--accent);">Celui qui contrôle les nœuds contrôle le réseau.</em>
+    </div>
+    <div style="color: var(--accent); font-size: 1.5rem; font-weight: bold; margin: 1rem 0;">— S.</div>
+  </footer>
+
+  <script>
+    var currentTier = 'free';
+
+    function switchTab(tab) {
+      var tabs = document.querySelectorAll('.tab');
+      var contents = document.querySelectorAll('.tab-content');
+      
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+      }
+      for (var i = 0; i < contents.length; i++) {
+        contents[i].classList.remove('active');
+      }
+      
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+
+      if (currentTier === 'free') {
+        if (tab === 'analytics' || tab === 'api' || tab === 'reports') {
+          setTimeout(function() {
+            document.getElementById('upgradeBanner').style.display = 'block';
+          }, 1000);
+        }
+      }
+    }
+
+    function showPricing() {
+      switchTab('pricing');
+      closeBanner();
+    }
+
+    function closeBanner() {
+      document.getElementById('upgradeBanner').style.display = 'none';
+    }
+
+    function requestDemo(tier) {
+      alert('Demo Request for ' + tier.toUpperCase() + ' tier\n\nContact: sales@myspot.io\nPhone: +32 2 XXX XX XX\n\nWe\'ll reach out within 24 hours to schedule your personalized demo.');
+    }
+
+    function calculateROI() {
+      var studies = parseFloat(document.getElementById('roiStudies').value) || 0;
+      var consultant = parseFloat(document.getElementById('roiConsultant').value) || 0;
+      var count = parseFloat(document.getElementById('roiCount').value) || 0;
+      var hours = parseFloat(document.getElementById('roiHours').value) || 0;
+      var rate = parseFloat(document.getElementById('roiRate').value) || 0;
+      var plan = parseFloat(document.getElementById('roiPlan').value) || 0;
+
+      var studiesSaved = count * consultant * 20;
+      var staffSaved = hours * rate * 12;
+      var annualCost = plan * 12;
+      var netSavings = studiesSaved + staffSaved - annualCost;
+      var roiPercent = annualCost > 0 ? Math.round((netSavings / annualCost) * 100) : 0;
+
+      document.getElementById('roiStudiesValue').textContent = '€' + studiesSaved.toLocaleString();
+      document.getElementById('roiStaffValue').textContent = '€' + staffSaved.toLocaleString();
+      document.getElementById('roiCostValue').textContent = '-€' + annualCost.toLocaleString();
+      document.getElementById('roiNetValue').textContent = '€' + netSavings.toLocaleString();
+      document.getElementById('roiValue').textContent = (netSavings >= 0 ? '+' : '') + '€' + netSavings.toLocaleString();
+      document.getElementById('roiPercent').textContent = roiPercent;
+    }
+
+    calculateROI();
+
+    console.log('%c█████ mySPOT Pro █████', 'color: #00ff88; font-weight: bold; font-size: 1.5rem;');
+    console.log('%cTerritorial Intelligence Platform', 'color: #8b92a0; font-size: 1rem;');
+    console.log('%c', '');
+    console.log('%cRevenue Model: B2B/B2G SaaS', 'color: #4a90e2;');
+    console.log('%cTarget: €42M over 20 years', 'color: #00ff88;');
+    console.log('%cProjected: €37.2M in 5 years', 'color: #00ff88; font-weight: bold;');
+    console.log('%c', '');
+    console.log('%c— S.', 'color: #ff4466; font-size: 1.2rem; font-weight: bold;');
+  </script>
+</body>
+</html>
