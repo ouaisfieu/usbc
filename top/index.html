@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mySPOT Pro - Smart City Data Marketplace</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #0a0e1a;
+      --card: #131824;
+      --accent: #00ff88;
+      --accent-dim: #00aa55;
+      --text: #e0e6ed;
+      --text-dim: #8b92a0;
+      --border: #1e2740;
+      --danger: #ff4466;
+      --warning: #ffaa00;
+      --pro: #4a90e2;
+      --enterprise: #9b59b6;
+      --gold: #ffd700;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .glitch {
+      animation: glitch 3s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 100% { text-shadow: 0 0 1px var(--accent); }
+      25% { text-shadow: -2px 0 var(--accent), 2px 2px var(--danger); }
+      50% { text-shadow: 2px -2px var(--danger), -2px 2px var(--accent); }
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 2px solid var(--accent);
+      padding: 1.5rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      letter-spacing: 0.3rem;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .revenue-tracker {
+      text-align: center;
+      padding: 1rem;
+      background: var(--bg);
+      border: 2px solid var(--gold);
+      border-radius: 4px;
+    }
+
+    .revenue-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--gold);
+    }
+
+    .revenue-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .gamification-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .user-level {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      font-size: 1.5rem;
+    }
+
+    .xp-bar {
+      flex: 1;
+      background: var(--bg);
+      height: 20px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      transition: width 0.5s;
+    }
+
+    .xp-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: var(--text);
+      text-shadow: 0 0 3px var(--bg);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      position: relative;
+    }
+
+    .tab:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .tab.locked::after {
+      content: '🔒';
+      margin-left: 0.5rem;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      padding: 1.5rem;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .metric-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .metric-card.revenue {
+      border-color: var(--gold);
+    }
+
+    .metric-card.social {
+      border-color: var(--pro);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .metric-change {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .metric-change.positive { color: var(--accent); }
+    .metric-change.negative { color: var(--danger); }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section h2 {
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+    }
+
+    .marketplace-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .data-product {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .data-product:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .data-product.bestseller::before {
+      content: '🔥 BESTSELLER';
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      background: var(--danger);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .product-price {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--gold);
+      margin: 1rem 0;
+    }
+
+    .product-features {
+      list-style: none;
+      margin: 1rem 0;
+      line-height: 2;
+    }
+
+    .product-features li::before {
+      content: '✓ ';
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .claim-feed {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .claim-item {
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      animation: slideIn 0.5s;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .claim-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .claim-agent {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .claim-xp {
+      color: var(--gold);
+      font-size: 0.85rem;
+    }
+
+    .leaderboard {
+      background: var(--bg);
+      padding: 1rem;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .leaderboard-rank {
+      font-size: 1.5rem;
+      font-weight: bold;
+      width: 40px;
+    }
+
+    .leaderboard-rank.gold { color: var(--gold); }
+    .leaderboard-rank.silver { color: #c0c0c0; }
+    .leaderboard-rank.bronze { color: #cd7f32; }
+
+    .btn-primary {
+      padding: 1rem 2rem;
+      background: var(--accent);
+      border: none;
+      color: var(--bg);
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.8;
+    }
+
+    .btn-secondary {
+      padding: 1rem 2rem;
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      width: 100%;
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    table th,
+    table td {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    table th {
+      background: var(--bg);
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .chart-container {
+      background: var(--bg);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      margin: 1rem 0;
+      min-height: 300px;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+      height: 200px;
+      margin-top: 2rem;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(to top, var(--accent), var(--gold));
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0.5rem;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .bar:hover {
+      opacity: 0.8;
+    }
+
+    .bar-value {
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -2rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .achievement {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .achievement.unlocked {
+      border-color: var(--gold);
+    }
+
+    .achievement.locked {
+      opacity: 0.3;
+    }
+
+    .achievement-icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .achievement-name {
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .achievement-desc {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .live-ticker {
+      background: var(--danger);
+      color: white;
+      padding: 0.5rem 2rem;
+      text-align: center;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .api-explorer {
+      background: var(--bg);
+      padding: 2rem;
+      border: 1px solid var(--border);
+    }
+
+    .code-block {
+      background: #000;
+      padding: 1rem;
+      border: 1px solid var(--accent);
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      color: var(--accent);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 2px solid var(--accent);
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .modal h2 {
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .gdpr-banner {
+      background: var(--pro);
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .value-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .value-card {
+      background: var(--bg);
+      padding: 2rem;
+      border-left: 4px solid var(--accent);
+    }
+
+    .value-card.social {
+      border-left-color: var(--pro);
+    }
+
+    .value-card h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .value-card.social h3 {
+      color: var(--pro);
+    }
+
+    footer {
+      background: var(--card);
+      border-top: 2px solid var(--accent);
+      padding: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="gdpr-banner">
+    🔒 100% RGPD Compliant | Données anonymisées | Consentement explicite | Transparence totale
+  </div>
+
+  <div class="live-ticker">
+    🔴 LIVE: <span id="liveClaims">0</span> claims aujourd'hui | <span id="liveRevenue">€0</span> revenus générés ce mois | <span id="activeUsers">0</span> utilisateurs actifs
+  </div>
+
+  <header>
+    <div class="header-grid">
+      <div>
+        <h1 class="glitch">my<span style="color: var(--danger)">SPOT</span> <span style="font-size: 1rem; color: var(--gold);">Pro</span></h1>
+        <div style="color: var(--text-dim); font-size: 0.85rem; margin-top: 0.5rem;">
+          Smart City Data Marketplace | Gamification + B2B/B2G SaaS
+        </div>
+      </div>
+      <div class="revenue-tracker">
+        <div class="revenue-label">MRR (Monthly Recurring Revenue)</div>
+        <div class="revenue-value">€<span id="mrrValue">0</span></div>
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
+          ARR: €<span id="arrValue">0</span>
+        </div>
+      </div>
+      <div class="revenue-tracker" style="border-color: var(--pro);">
+        <div class="revenue-label">Valeur Sociale Générée</div>
+        <div class="revenue-value" style="color: var(--pro);"><span id="socialValue">0</span></div>
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
+          Claims citoyens actifs
+        </div>
+      </div>
+    </div>
+
+    <div class="gamification-bar" style="margin-top: 1rem;">
+      <div class="user-level">
+        <span class="badge" id="userBadge">🎮</span>
+        <div>
+          <div style="font-weight: bold; color: var(--accent);">Level <span id="userLevel">1</span></div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);" id="userTitle">Citoyen Novice</div>
+        </div>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-fill" id="xpFill" style="width: 0%;"></div>
+        <div class="xp-text"><span id="currentXP">0</span> / <span id="nextLevelXP">100</span> XP</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-weight: bold; color: var(--gold);"><span id="totalPoints">0</span> pts</div>
+        <div style="font-size: 0.75rem; color: var(--text-dim);"><span id="totalClaims">0</span> claims</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('citizen')">🎮 Citizen (Free)</div>
+      <div class="tab" onclick="switchTab('marketplace')">💰 Data Marketplace</div>
+      <div class="tab" onclick="switchTab('analytics')">📊 Analytics<span style="font-size: 0.7rem; margin-left: 0.5rem;">PRO</span></div>
+      <div class="tab" onclick="switchTab('revenue')">💎 Revenue Model</div>
+      <div class="tab" onclick="switchTab('api')">🔌 API<span style="font-size: 0.7rem; margin-left: 0.5rem;">ENTERPRISE</span></div>
+      <div class="tab" onclick="switchTab('leaderboard')">🏆 Leaderboard</div>
+    </div>
+  </header>
+
+  <!-- CITIZEN TAB -->
+  <div id="tab-citizen" class="tab-content active">
+    <div class="section">
+      <h2>🎮 Interface Citoyenne Gratuite - Gamification Territoriale</h2>
+      <p style="margin-bottom: 2rem; line-height: 1.6;">
+        Participez à la cartographie collaborative de votre ville. Chaque claim génère des données précieuses 
+        pour améliorer les services publics. <strong>100% gratuit, 100% anonymisé, 100% impactant.</strong>
+      </p>
+
+      <div class="dashboard-grid">
+        <div class="metric-card social">
+          <div class="metric-label">Vos Claims Totaux</div>
+          <div class="metric-value" style="color: var(--pro);" id="userClaimsCount">0</div>
+          <div class="metric-change positive">+<span id="claimsToday">0</span> aujourd'hui</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Impact Social</div>
+          <div class="metric-value" id="impactScore">0</div>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">
+            Vos données ont aidé <span id="helpedProjects">0</span> projets urbains
+          </div>
+        </div>
+        <div class="metric-card revenue">
+          <div class="metric-label">Valeur Générée</div>
+          <div class="metric-value" style="color: var(--gold);">€<span id="userValueGenerated">0</span></div>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">
+            Contribution économique estimée
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Rank Global</div>
+          <div class="metric-value">#<span id="userRank">—</span></div>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">
+            Sur <span id="totalUsers">1,247</span> joueurs
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <div class="section">
+          <h2>📍 Claim en Temps Réel</h2>
+          <div class="form-group">
+            <label>Stop / Lieu</label>
+            <input type="text" id="claimStop" placeholder="Ex: Bourse, De Brouckère...">
+          </div>
+          <div class="form-group">
+            <label>Type de Claim</label>
+            <select id="claimType">
+              <option value="transit">🚇 Mobilité / Transit</option>
+              <option value="safety">🛡️ Sécurité</option>
+              <option value="cleanliness">🧹 Propreté</option>
+              <option value="accessibility">♿ Accessibilité</option>
+              <option value="suggestion">💡 Suggestion</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message (optionnel)</label>
+            <textarea id="claimMessage" placeholder="Décrivez votre observation..."></textarea>
+          </div>
+          <button class="btn-primary" onclick="submitClaim()">🚀 Claim Territory (+10 XP)</button>
+          <div style="margin-top: 1rem; padding: 1rem; background: var(--bg); border-left: 3px solid var(--accent); font-size: 0.85rem;">
+            ℹ️ Vos données sont <strong>anonymisées</strong> et agrégées. Elles servent uniquement à améliorer 
+            les services publics. Consultez notre <a href="#" style="color: var(--accent);">Charte RGPD</a>.
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>🏆 Achievements</h2>
+          <div class="achievement-grid">
+            <div class="achievement unlocked">
+              <div class="achievement-icon">🎯</div>
+              <div class="achievement-name">First Claim</div>
+              <div class="achievement-desc">Votre premier claim</div>
+            </div>
+            <div class="achievement locked">
+              <div class="achievement-icon">🔥</div>
+              <div class="achievement-name">Hot Spot</div>
+              <div class="achievement-desc">10 claims</div>
+            </div>
+            <div class="achievement locked">
+              <div class="achievement-icon">⚡</div>
+              <div class="achievement-name">Power User</div>
+              <div class="achievement-desc">50 claims</div>
+            </div>
+            <div class="achievement locked">
+              <div class="achievement-icon">👑</div>
+              <div class="achievement-name">Territory King</div>
+              <div class="achievement-desc">200 claims</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📰 Feed de Claims Communautaire</h2>
+        <div class="claim-feed" id="claimFeed"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKETPLACE TAB -->
+  <div id="tab-marketplace" class="tab-content">
+    <div class="section">
+      <h2>💰 Data Marketplace - Produits de Données Territoriales</h2>
+      <p style="margin-bottom: 2rem; line-height: 1.6;">
+        Données comportementales anonymisées, rapports analytiques et insights territoriaux pour institutions, 
+        chercheurs et entreprises. <strong>100% RGPD compliant | Agrégation totale | Zero données personnelles.</strong>
+      </p>
+
+      <div class="marketplace-grid">
+        <div class="data-product bestseller">
+          <h3 style="color: var(--accent);">Rapport Mobilité Mensuel</h3>
+          <p style="margin: 1rem 0; line-height: 1.6; font-size: 0.9rem;">
+            Flux de déplacements agrégés, heatmaps de fréquentation, patterns horaires. 
+            Données sur 50,000+ claims anonymisés.
+          </p>
+          <div class="product-price">€2,500</div>
+          <ul class="product-features">
+            <li>30 jours de données temps réel</li>
+            <li>Heatmaps interactives</li>
+            <li>Export CSV + GeoJSON</li>
+            <li>Dashboard analytique</li>
+          </ul>
+          <button class="btn-primary" onclick="purchaseProduct('mobility-monthly')">Acheter Maintenant</button>
+        </div>
+
+        <div class="data-product">
+          <h3 style="color: var(--accent);">Audit Territorial Trimestriel</h3>
+          <p style="margin: 1rem 0; line-height: 1.6; font-size: 0.9rem;">
+            Analyse complète d'une zone définie: couverture réseau, tensions, opportunités, 
+            recommandations stratégiques.
+          </p>
+          <div class="product-price">€5,000</div>
+          <ul class="product-features">
+            <li>150+ indicateurs territoriaux</li>
+            <li>Rapport PDF exécutif</li>
+            <li>Benchmarks comparatifs</li>
+            <li>Session consulting 2h incluse</li>
+          </ul>
+          <button class="btn-primary" onclick="purchaseProduct('audit-quarterly')">Acheter Maintenant</button>
+        </div>
+
+        <div class="data-product bestseller">
+          <h3 style="color: var(--accent);">Abonnement Pro (Mensuel)</h3>
+          <p style="margin: 1rem 0; line-height: 1.6; font-size: 0.9rem;">
+            Accès illimité au dashboard analytics, API 10K req/jour, rapports automatisés, 
+            support prioritaire.
+          </p>
+          <div class="product-price">€2,000<span style="font-size: 1rem;">/mo</span></div>
+          <ul class="product-features">
+            <li>Dashboard temps réel</li>
+            <li>API REST complète</li>
+            <li>Rapports auto mensuels</li>
+            <li>White-label option</li>
+            <li>Support email prioritaire</li>
+          </ul>
+          <button class="btn-primary" onclick="purchaseProduct('pro-monthly')">S'abonner (Essai 14j)</button>
+        </div>
+
+        <div class="data-product">
+          <h3 style="color: var(--accent);">Licence Enterprise (Annuelle)</h3>
+          <p style="margin: 1rem 0; line-height: 1.6; font-size: 0.9rem;">
+            Solution complète pour opérateurs transport et grandes institutions. 
+            API illimitée, intégrations custom, SLA 99.9%.
+          </p>
+          <div class="product-price">€120,000<span style="font-size: 1rem;">/an</span></div>
+          <ul class="product-features">
+            <li>API illimitée + webhooks</li>
+            <li>Intégrations sur-mesure</li>
+            <li>Dedicated account manager</li>
+            <li>SLA 99.9% uptime</li>
+            <li>Déploiement on-premise option</li>
+          </ul>
+          <button class="btn-primary" onclick="purchaseProduct('enterprise-annual')" style="background: var(--enterprise);">Contact Sales</button>
+        </div>
+
+        <div class="data-product">
+          <h3 style="color: var(--accent);">Dataset Custom Intelligence</h3>
+          <p style="margin: 1rem 0; line-height: 1.6; font-size: 0.9rem;">
+            Recherche sur-mesure, collecte de données spécifiques, analyse thématique 
+            dédiée à vos questions stratégiques.
+          </p>
+          <div class="product-price">€15,000+</div>
+          <ul class="product-features">
+            <li>Analyste dédié</li>
+            <li>Méthodologie personnalisée</li>
+            <li>Collecte terrain si nécessaire</li>
+            <li>Livrables sur-mesure</li>
+          </ul>
+          <button class="btn-secondary" onclick="purchaseProduct('custom')">Demande de Devis</button>
+        </div>
+
+        <div class="data-product">
+          <h3 style="color: var(--accent);">API Access Basic</h3>
+          <p style="margin: 1rem 0; line-height: 1.6; font-size: 0.9rem;">
+            Accès API pour petites structures: 1,000 requêtes/jour, endpoints territoires 
+            et analytics de base.
+          </p>
+          <div class="product-price">€500<span style="font-size: 1rem;">/mo</span></div>
+          <ul class="product-features">
+            <li>1K req/jour</li>
+            <li>Endpoints GET principaux</li>
+            <li>Documentation complète</li>
+            <li>Support email standard</li>
+          </ul>
+          <button class="btn-primary" onclick="purchaseProduct('api-basic')">Activer API</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 3rem; padding: 2rem; background: var(--card); border: 2px solid var(--gold);">
+        <h3 style="color: var(--gold); margin-bottom: 1rem;">💎 Clients Actuels (exemples)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="padding: 1rem; background: var(--bg); text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚇</div>
+            <div style="font-weight: bold;">STIB Brussels</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Enterprise Client</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg); text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏛️</div>
+            <div style="font-weight: bold;">Brussels Mobility</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Pro Subscriber</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg); text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎓</div>
+            <div style="font-weight: bold;">ULB Research</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Academic License</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg); text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏢</div>
+            <div style="font-weight: bold;">TEC Wallonie</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Enterprise Client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="tab-analytics" class="tab-content">
+    <div class="section">
+      <h2>📊 Analytics Dashboard - Insights Territoriaux Temps Réel</h2>
+      
+      <div class="dashboard-grid">
+        <div class="metric-card">
+          <div class="metric-label">Claims Total (30j)</div>
+          <div class="metric-value" id="totalClaims30d">12,487</div>
+          <div class="metric-change positive">↑ 23% vs mois dernier</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Utilisateurs Actifs</div>
+          <div class="metric-value" id="activeUsers30d">1,892</div>
+          <div class="metric-change positive">↑ 15% croissance</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Taux Engagement</div>
+          <div class="metric-value">67<span style="font-size: 1rem;">%</span></div>
+          <div class="metric-change positive">↑ 5 points</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Data Quality Score</div>
+          <div class="metric-value">94<span style="font-size: 1rem;">/100</span></div>
+          <div class="metric-change positive">Excellent</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3 style="color: var(--accent); margin-bottom: 1rem;">Claims par Jour (7 derniers jours)</h3>
+        <div class="bar-chart">
+          <div class="bar" style="height: 60%;">
+            <div class="bar-value">142</div>
+            <div class="bar-label">Lun</div>
+          </div>
+          <div class="bar" style="height: 75%;">
+            <div class="bar-value">178</div>
+            <div class="bar-label">Mar</div>
+          </div>
+          <div class="bar" style="height: 90%;">
+            <div class="bar-value">213</div>
+            <div class="bar-label">Mer</div>
+          </div>
+          <div class="bar" style="height: 85%;">
+            <div class="bar-value">201</div>
+            <div class="bar-label">Jeu</div>
+          </div>
+          <div class="bar" style="height: 70%;">
+            <div class="bar-value">166</div>
+            <div class="bar-label">Ven</div>
+          </div>
+          <div class="bar" style="height: 40%;">
+            <div class="bar-value">95</div>
+            <div class="bar-label">Sam</div>
+          </div>
+          <div class="bar" style="height: 35%;">
+            <div class="bar-value">83</div>
+            <div class="bar-label">Dim</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <div class="section">
+          <h3 style="color: var(--accent); margin-bottom: 1rem;">Top 5 Zones Actives</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Zone</th>
+                <th>Claims</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Schuman</td>
+                <td>423</td>
+                <td style="color: var(--accent);">↑ 12%</td>
+              </tr>
+              <tr>
+                <td>Bourse</td>
+                <td>387</td>
+                <td style="color: var(--accent);">↑ 8%</td>
+              </tr>
+              <tr>
+                <td>Gare du Midi</td>
+                <td>341</td>
+                <td style="color: var(--accent);">↑ 15%</td>
+              </tr>
+              <tr>
+                <td>Louise</td>
+                <td>298</td>
+                <td style="color: var(--danger);">↓ 3%</td>
+              </tr>
+              <tr>
+                <td>De Brouckère</td>
+                <td>276</td>
+                <td style="color: var(--accent);">↑ 5%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h3 style="color: var(--accent); margin-bottom: 1rem;">Catégories de Claims</h3>
+          <div style="margin-top: 1rem;">
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>🚇 Mobilité</span>
+                <span>42%</span>
+              </div>
+              <div style="background: var(--bg); height: 10px;">
+                <div style="background: var(--accent); height: 100%; width: 42%;"></div>
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>🛡️ Sécurité</span>
+                <span>23%</span>
+              </div>
+              <div style="background: var(--bg); height: 10px;">
+                <div style="background: var(--pro); height: 100%; width: 23%;"></div>
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>🧹 Propreté</span>
+                <span>18%</span>
+              </div>
+              <div style="background: var(--bg); height: 10px;">
+                <div style="background: var(--warning); height: 100%; width: 18%;"></div>
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>♿ Accessibilité</span>
+                <span>12%</span>
+              </div>
+              <div style="background: var(--bg); height: 10px;">
+                <div style="background: var(--danger); height: 100%; width: 12%;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>💡 Suggestions</span>
+                <span>5%</span>
+              </div>
+              <div style="background: var(--bg); height: 10px;">
+                <div style="background: var(--gold); height: 100%; width: 5%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVENUE MODEL TAB -->
+  <div id="tab-revenue" class="tab-content">
+    <div class="section">
+      <h2>💎 Modèle de Revenus - Projection 5 Ans</h2>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Année</th>
+            <th>Clients Pro</th>
+            <th>Clients Enterprise</th>
+            <th>Revenus Annuels</th>
+            <th>Cumulé</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025</td>
+            <td>42 × €24K</td>
+            <td>10 × €120K</td>
+            <td>€2,208,000</td>
+            <td>€2.2M</td>
+          </tr>
+          <tr>
+            <td>2026</td>
+            <td>84 × €24K</td>
+            <td>20 × €120K</td>
+            <td>€4,416,000</td>
+            <td>€6.6M</td>
+          </tr>
+          <tr>
+            <td>2027</td>
+            <td>126 × €24K</td>
+            <td>35 × €120K</td>
+            <td>€7,224,000</td>
+            <td>€13.8M</td>
+          </tr>
+          <tr>
+            <td>2028</td>
+            <td>168 × €24K</td>
+            <td>50 × €120K</td>
+            <td>€10,032,000</td>
+            <td>€23.8M</td>
+          </tr>
+          <tr>
+            <td>2029</td>
+            <td>210 × €24K</td>
+            <td>70 × €120K</td>
+            <td>€13,440,000</td>
+            <td>€37.2M</td>
+          </tr>
+          <tr style="background: rgba(0, 255, 136, 0.1); font-weight: bold;">
+            <td colspan="3">TOTAL 2025-2029</td>
+            <td colspan="2" style="color: var(--gold); font-size: 1.2rem;">€37,200,000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 2rem; padding: 2rem; background: var(--card); border-left: 4px solid var(--gold);">
+        <h3 style="color: var(--gold); margin-bottom: 1rem;">🎯 Objectif Budget: €42M sur 20 ans</h3>
+        <p style="line-height: 1.6; margin-bottom: 1rem;">
+          <strong>€37.2M atteints en 5 ans = 88% de l'objectif total</strong>
+        </p>
+        <p style="line-height: 1.6;">
+          Projection conservatrice basée sur le marché GovTech/CivicTech européen (€199-334Md potentiel).
+          Avec 42 ETP d'ici 2030, structure opérationnelle viable et scalable.
+        </p>
+      </div>
+
+      <div class="value-metrics">
+        <div class="value-card">
+          <h3>💰 Valeur Économique</h3>
+          <ul style="line-height: 2;">
+            <li>MRR croissant: €0 → €1.2M/mois (An 5)</li>
+            <li>Taux renouvellement: 90%+ (industrie standard)</li>
+            <li>CAC récupéré en 6-12 mois</li>
+            <li>LTV/CAC ratio: 5:1 visé</li>
+            <li>Marge brute: 75-85% (SaaS typique)</li>
+          </ul>
+        </div>
+
+        <div class="value-card social">
+          <h3>🌍 Valeur Sociale</h3>
+          <ul style="line-height: 2;">
+            <li>1M+ citoyens engagés (projection An 5)</li>
+            <li>Participation démocratique +200%</li>
+            <li>Amélioration services publics mesurable</li>
+            <li>Transparence et accountability</li>
+            <li>Éducation civique par le jeu</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top: 2rem;">
+        <h2>📈 Sources de Revenus Détaillées</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+          <div style="background: var(--bg); padding: 1.5rem; border-left: 3px solid var(--accent);">
+            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Abonnements Pro</h4>
+            <div style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0;">€2,000/mois</div>
+            <p style="font-size: 0.85rem; color: var(--text-dim);">
+              Municipalités, agences régionales, bureaux d'études
+            </p>
+          </div>
+          <div style="background: var(--bg); padding: 1.5rem; border-left: 3px solid var(--enterprise);">
+            <h4 style="color: var(--enterprise); margin-bottom: 0.5rem;">Licences Enterprise</h4>
+            <div style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0;">€10,000/mois</div>
+            <p style="font-size: 0.85rem; color: var(--text-dim);">
+              Opérateurs transport, grandes métropoles
+            </p>
+          </div>
+          <div style="background: var(--bg); padding: 1.5rem; border-left: 3px solid var(--gold);">
+            <h4 style="color: var(--gold); margin-bottom: 0.5rem;">Rapports & Datasets</h4>
+            <div style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0;">€2.5K-15K</div>
+            <p style="font-size: 0.85rem; color: var(--text-dim);">
+              One-time purchases, recherche custom
+            </p>
+          </div>
+          <div style="background: var(--bg); padding: 1.5rem; border-left: 3px solid var(--pro);">
+            <h4 style="color: var(--pro); margin-bottom: 0.5rem;">Subventions Publiques</h4>
+            <div style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0;">€200K-2M</div>
+            <p style="font-size: 0.85rem; color: var(--text-dim);">
+              Innovation, transition numérique, Europe
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API TAB -->
+  <div id="tab-api" class="tab-content">
+    <div class="section">
+      <h2>🔌 API Documentation - Enterprise Access</h2>
+      
+      <div class="api-explorer">
+        <h3 style="color: var(--accent); margin-bottom: 1rem;">REST API Endpoints</h3>
+        
+        <h4 style="margin: 2rem 0 1rem;">GET /api/v1/territories</h4>
+        <p style="margin-bottom: 1rem;">Retrieve territorial claims with filters</p>
+        <div class="code-block">GET https://api.myspot.io/v1/territories?region=brussels&days=30
+Authorization: Bearer YOUR_API_KEY
+
+Response:
+{
+  "territories": [
+    {
+      "id": "T_123",
+      "name": "Schuman",
+      "claims": 423,
+      "contested": true,
+      "coords": [50.8417, 4.3800],
+      "last_activity": "2025-12-27T14:32:00Z"
+    }
+  ],
+  "meta": {
+    "total": 1247,
+    "page": 1
+  }
+}</div>
+
+        <h4 style="margin: 2rem 0 1rem;">GET /api/v1/analytics/heatmap</h4>
+        <p style="margin-bottom: 1rem;">Generate activity heatmaps</p>
+        <div class="code-block">GET https://api.myspot.io/v1/analytics/heatmap?period=7d&granularity=hour
+
+Response:
+{
+  "heatmap": {
+    "monday": [12, 45, 89, 134, ...],
+    "tuesday": [15, 52, 95, 142, ...],
+    ...
+  },
+  "peak_hour": 18,
+  "peak_day": "wednesday"
+}</div>
+
+        <h4 style="margin: 2rem 0 1rem;">POST /api/v1/reports/generate</h4>
+        <p style="margin-bottom: 1rem;">Generate custom territorial reports</p>
+        <div class="code-block">POST https://api.myspot.io/v1/reports/generate
+Content-Type: application/json
+
+{
+  "region": "brussels",
+  "report_type": "territorial_audit",
+  "period": "quarterly",
+  "format": "pdf"
+}
+
+Response:
+{
+  "report_id": "REP_20251227_001",
+  "status": "processing",
+  "download_url": "https://...",
+  "expires_at": "2025-12-28T14:32:00Z"
+}</div>
+
+        <div style="margin-top: 2rem; padding: 1.5rem; background: var(--card); border: 2px solid var(--enterprise);">
+          <h3 style="color: var(--enterprise); margin-bottom: 1rem;">Enterprise Features</h3>
+          <ul style="line-height: 2;">
+            <li>✅ 10,000 requests/day (scalable)</li>
+            <li>✅ Real-time webhooks for events</li>
+            <li>✅ Custom data exports (CSV, GeoJSON, Parquet)</li>
+            <li>✅ White-label API option</li>
+            <li>✅ Dedicated infrastructure</li>
+            <li>✅ SLA 99.9% uptime guaranteed</li>
+            <li>✅ Priority support 24/7</li>
+          </ul>
+          <button class="btn-primary" onclick="alert('Contact: enterprise@myspot.io')" style="background: var(--enterprise); margin-top: 1rem;">Request API Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD TAB -->
+  <div id="tab-leaderboard" class="tab-content">
+    <div class="section">
+      <h2>🏆 Global Leaderboard - Top Contributors</h2>
+      
+      <div class="leaderboard">
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank gold">1</div>
+          <div style="flex: 1;">
+            <div style="font-weight: bold; color: var(--gold);">Agent_Alpha</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Level 47 | Territory King</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: bold; color: var(--gold);">12,487 pts</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">892 claims</div>
+          </div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank silver">2</div>
+          <div style="flex: 1;">
+            <div style="font-weight: bold;">CitizenBravo</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Level 42 | Power User</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: bold;">9,234 pts</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">678 claims</div>
+          </div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank bronze">3</div>
+          <div style="flex: 1;">
+            <div style="font-weight: bold;">DataCharlotte</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Level 38 | Hot Spot</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: bold;">7,891 pts</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">534 claims</div>
+          </div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">4</div>
+          <div style="flex: 1;">
+            <div style="font-weight: bold;">UrbanDelta</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Level 35</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: bold;">6,542 pts</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">423 claims</div>
+          </div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">5</div>
+          <div style="flex: 1;">
+            <div style="font-weight: bold;">MobilityEcho</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">Level 31</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: bold;">5,123 pts</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">387 claims</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; text-align: center; padding: 2rem; background: var(--card); border: 2px solid var(--accent);">
+        <h3 style="color: var(--accent); margin-bottom: 1rem;">🎯 Votre Position</h3>
+        <div style="font-size: 3rem; font-weight: bold; color: var(--gold);">#<span id="myRank">—</span></div>
+        <div style="margin-top: 1rem; color: var(--text-dim);">
+          <span id="pointsToNext">0</span> points pour atteindre le rang suivant
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--accent); margin-bottom: 1rem;">Contact & Démo</h3>
+      <button onclick="alert('Sales: sales@myspot.io | +32 2 XXX XX XX')" style="padding: 1.25rem 3rem; background: var(--accent); color: var(--bg); border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin: 0.5rem; font-family: inherit;">Demande de Démo</button>
+      <button onclick="window.open('mailto:enterprise@myspot.io')" style="padding: 1.25rem 3rem; background: transparent; color: var(--accent); border: 2px solid var(--accent); font-size: 1.1rem; font-weight: bold; cursor: pointer; margin: 0.5rem; font-family: inherit;">Contact Enterprise</button>
+    </div>
+    <div style="color: var(--text-dim); line-height: 1.6;">
+      mySPOT Pro - Territorial Intelligence Platform<br>
+      Smart City Data Marketplace | B2B/B2G SaaS<br>
+      SCP 329.02 • Brussels, Belgium<br>
+      <em style="color: var(--accent);">Celui qui contrôle les nœuds contrôle le réseau.</em>
+    </div>
+    <div style="color: var(--accent); font-size: 1.5rem; font-weight: bold; margin: 1rem 0;">— S.</div>
+    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 1rem;">
+      🔒 RGPD Compliant | Data Anonymization | Ethical AI | Open Data
+    </div>
+  </footer>
+
+  <!-- Purchase Modal -->
+  <div class="modal-overlay" id="purchaseModal">
+    <div class="modal">
+      <h2>💰 Purchase Data Product</h2>
+      <div id="purchaseDetails"></div>
+      <div class="form-group">
+        <label>Organisation</label>
+        <input type="text" id="orgName" placeholder="Nom de votre institution">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="orgEmail" placeholder="contact@organisation.be">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="orgType">
+          <option value="public">Administration publique</option>
+          <option value="private">Entreprise privée</option>
+          <option value="research">Recherche / Académique</option>
+          <option value="ngo">ONG / Association</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="confirmPurchase()">Confirmer l'Achat</button>
+      <button class="btn-secondary" onclick="closeModal()" style="margin-top: 0.5rem;">Annuler</button>
+    </div>
+  </div>
+
+  <script>
+    var userXP = 0;
+    var userLevel = 1;
+    var userPoints = 0;
+    var userClaimsCount = 0;
+    var totalClaims = 0;
+    var mrrValue = 0;
+    var socialValue = 0;
+    var currentPurchase = null;
+
+    var claims = [];
+
+    function init() {
+      updateMetrics();
+      generateInitialClaims();
+      updateLiveTicker();
+      setInterval(updateLiveTicker, 5000);
+      setInterval(simulateNewClaim, 15000);
+    }
+
+    function generateInitialClaims() {
+      var stops = ['Bourse', 'Schuman', 'Gare du Midi', 'Louise', 'De Brouckère', 'Rogier', 'Arts-Loi'];
+      var agents = ['Agent_Alpha', 'CitizenBravo', 'DataCharlotte', 'UrbanDelta', 'MobilityEcho'];
+      var types = ['transit', 'safety', 'cleanliness', 'accessibility', 'suggestion'];
+      
+      for (var i = 0; i < 10; i++) {
+        var claim = {
+          agent: agents[Math.floor(Math.random() * agents.length)],
+          stop: stops[Math.floor(Math.random() * stops.length)],
+          type: types[Math.floor(Math.random() * types.length)],
+          xp: 10,
+          time: new Date(Date.now() - Math.random() * 3600000).toLocaleTimeString()
+        };
+        claims.unshift(claim);
+      }
+      
+      renderClaimFeed();
+    }
+
+    function simulateNewClaim() {
+      var stops = ['Bourse', 'Schuman', 'Gare du Midi', 'Louise', 'De Brouckère'];
+      var agents = ['Agent_Alpha', 'CitizenBravo', 'DataCharlotte'];
+      var types = ['transit', 'safety', 'cleanliness', 'accessibility'];
+      
+      var claim = {
+        agent: agents[Math.floor(Math.random() * agents.length)],
+        stop: stops[Math.floor(Math.random() * stops.length)],
+        type: types[Math.floor(Math.random() * types.length)],
+        xp: 10,
+        time: new Date().toLocaleTimeString()
+      };
+      
+      claims.unshift(claim);
+      if (claims.length > 20) claims.pop();
+      
+      totalClaims++;
+      socialValue++;
+      updateMetrics();
+      renderClaimFeed();
+    }
+
+    function renderClaimFeed() {
+      var feed = document.getElementById('claimFeed');
+      var html = '';
+      
+      for (var i = 0; i < Math.min(10, claims.length); i++) {
+        var c = claims[i];
+        var icon = c.type === 'transit' ? '🚇' : c.type === 'safety' ? '🛡️' : c.type === 'cleanliness' ? '🧹' : c.type === 'accessibility' ? '♿' : '💡';
+        html += '<div class="claim-item">';
+        html += '<div class="claim-header">';
+        html += '<div><span class="claim-agent">' + c.agent + '</span> claimed <strong>' + c.stop + '</strong> ' + icon + '</div>';
+        html += '<div class="claim-xp">+' + c.xp + ' XP</div>';
+        html += '</div>';
+        html += '<div style="font-size: 0.75rem; color: var(--text-dim);">' + c.time + '</div>';
+        html += '</div>';
+      }
+      
+      feed.innerHTML = html;
+    }
+
+    function submitClaim() {
+      var stop = document.getElementById('claimStop').value.trim();
+      var type = document.getElementById('claimType').value;
+      var message = document.getElementById('claimMessage').value.trim();
+      
+      if (!stop) {
+        alert('Entrez un nom de stop/lieu');
+        return;
+      }
+      
+      userXP += 10;
+      userPoints += 10;
+      userClaimsCount++;
+      totalClaims++;
+      socialValue++;
+      
+      while (userXP >= getNextLevelXP()) {
+        userXP -= getNextLevelXP();
+        userLevel++;
+      }
+      
+      var claim = {
+        agent: 'You',
+        stop: stop,
+        type: type,
+        xp: 10,
+        time: new Date().toLocaleTimeString()
+      };
+      
+      claims.unshift(claim);
+      if (claims.length > 20) claims.pop();
+      
+      document.getElementById('claimStop').value = '';
+      document.getElementById('claimMessage').value = '';
+      
+      updateMetrics();
+      renderClaimFeed();
+      
+      alert('✅ Claim enregistré! +10 XP | Merci pour votre contribution citoyenne!');
+    }
+
+    function getNextLevelXP() {
+      return 100 + (userLevel - 1) * 50;
+    }
+
+    function updateMetrics() {
+      document.getElementById('userLevel').textContent = userLevel;
+      document.getElementById('currentXP').textContent = userXP;
+      document.getElementById('nextLevelXP').textContent = getNextLevelXP();
+      document.getElementById('totalPoints').textContent = userPoints;
+      document.getElementById('totalClaims').textContent = userClaimsCount;
+      document.getElementById('userClaimsCount').textContent = userClaimsCount;
+      document.getElementById('impactScore').textContent = Math.floor(userPoints * 1.5);
+      document.getElementById('userValueGenerated').textContent = Math.floor(userPoints * 2.3);
+      
+      var xpPercent = (userXP / getNextLevelXP()) * 100;
+      document.getElementById('xpFill').style.width = xpPercent + '%';
+      
+      var title = userLevel < 5 ? 'Citoyen Novice' : userLevel < 10 ? 'Explorateur Urbain' : userLevel < 20 ? 'Cartographe Expert' : userLevel < 30 ? 'Analyste Territorial' : 'Data Architect';
+      var badge = userLevel < 5 ? '🎮' : userLevel < 10 ? '🗺️' : userLevel < 20 ? '📊' : userLevel < 30 ? '🎯' : '👑';
+      
+      document.getElementById('userTitle').textContent = title;
+      document.getElementById('userBadge').textContent = badge;
+      
+      document.getElementById('claimsToday').textContent = Math.floor(totalClaims * 0.1);
+      document.getElementById('helpedProjects').textContent = Math.floor(socialValue / 50);
+      
+      mrrValue = calculateMRR();
+      document.getElementById('mrrValue').textContent = mrrValue.toLocaleString();
+      document.getElementById('arrValue').textContent = (mrrValue * 12).toLocaleString();
+      document.getElementById('socialValue').textContent = socialValue;
+    }
+
+    function calculateMRR() {
+      var proClients = Math.floor(totalClaims / 300);
+      var enterpriseClients = Math.floor(totalClaims / 1000);
+      return (proClients * 2000) + (enterpriseClients * 10000);
+    }
+
+    function updateLiveTicker() {
+      document.getElementById('liveClaims').textContent = totalClaims;
+      document.getElementById('liveRevenue').textContent = '€' + mrrValue.toLocaleString();
+      document.getElementById('activeUsers').textContent = Math.floor(socialValue * 0.8);
+    }
+
+    function switchTab(tab) {
+      var tabs = document.querySelectorAll('.tab');
+      var contents = document.querySelectorAll('.tab-content');
+      
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+      }
+      for (var i = 0; i < contents.length; i++) {
+        contents[i].classList.remove('active');
+      }
+      
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    function purchaseProduct(productId) {
+      currentPurchase = productId;
+      
+      var products = {
+        'mobility-monthly': { name: 'Rapport Mobilité Mensuel', price: '€2,500' },
+        'audit-quarterly': { name: 'Audit Territorial Trimestriel', price: '€5,000' },
+        'pro-monthly': { name: 'Abonnement Pro', price: '€2,000/mois' },
+        'enterprise-annual': { name: 'Licence Enterprise', price: '€120,000/an' },
+        'custom': { name: 'Custom Intelligence', price: 'Sur devis' },
+        'api-basic': { name: 'API Access Basic', price: '€500/mois' }
+      };
+      
+      var product = products[productId];
+      var html = '<div style="padding: 1rem; background: var(--bg); margin-bottom: 1rem;">';
+      html += '<h3 style="color: var(--accent);">' + product.name + '</h3>';
+      html += '<div style="font-size: 1.5rem; font-weight: bold; color: var(--gold); margin: 0.5rem 0;">' + product.price + '</div>';
+      html += '</div>';
+      
+      document.getElementById('purchaseDetails').innerHTML = html;
+      document.getElementById('purchaseModal').classList.add('active');
+    }
+
+    function confirmPurchase() {
+      var orgName = document.getElementById('orgName').value.trim();
+      var orgEmail = document.getElementById('orgEmail').value.trim();
+      
+      if (!orgName || !orgEmail) {
+        alert('Veuillez remplir tous les champs');
+        return;
+      }
+      
+      alert('✅ Demande envoyée!\n\nNotre équipe vous contactera sous 24h pour finaliser votre achat.\n\nEmail de confirmation envoyé à: ' + orgEmail);
+      
+      closeModal();
+    }
+
+    function closeModal() {
+      document.getElementById('purchaseModal').classList.remove('active');
+      document.getElementById('orgName').value = '';
+      document.getElementById('orgEmail').value = '';
+    }
+
+    init();
+
+    console.log('%c███ mySPOT Pro ███', 'color: #00ff88; font-weight: bold; font-size: 1.5rem;');
+    console.log('%cSmart City Data Marketplace', 'color: #8b92a0; font-size: 1rem;');
+    console.log('%c', '');
+    console.log('%cObjectif: €42M sur 20 ans', 'color: #ffd700; font-weight: bold;');
+    console.log('%cProjection: €37.2M en 5 ans (88%)', 'color: #00ff88; font-weight: bold;');
+    console.log('%c42 ETP d\'ici 2030', 'color: #4a90e2;');
+    console.log('%c', '');
+    console.log('%cModèle: Freemium B2B/B2G SaaS + Data Marketplace', 'color: #8b92a0;');
+    console.log('%cGamification → Données → Monétisation Éthique', 'color: #00ff88;');
+    console.log('%c', '');
+    console.log('%c— S.', 'color: #ff4466; font-size: 1.2rem; font-weight: bold;');
+  </script>
+</body>
+</html>
