@@ -1,0 +1,2394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><script type='text/javascript' src='https://ouaisfieu.github.io/OVg5vf5N1rhYN54MxMi0biy4rBgBt3R4nH72dMhkPjnk0m44hapt-Kr7pR5NgY1WsX9DfDTnjNJPAuaIAtGaJV8Kwz6HF2NdfQxb3FaEUfuHmqvpEA_inOCEEz5DJHTzB94nJvRq49t7Aq1DjhOefSYUZJFS2fXfz4JS8c0s6KV1DgzDoHsOs4g_ktGv17F51aXm6kkfiae9sV1_OziGon0CDE38C0s2jej79Bu98kC2CDDopdaDaN17XdhFp1w9BJccjlwKgRH-vhXwYFvsbTHpkJmU6uy4h4zS8tJF8tsY0w8AsVdq7-8E45JGyGDe1XZ0E2i9HqQ1QFf3S5-gCyGFE_ZmDsSYay_CjcMJK5a-GG6XR7ln51bxF0YE0s51QzWkp2EcM7UDGPUyAMJH5N-i3O3Vq6kmIwDxjiSZ1ydbF8gpxqAnvtRkg29wqEoiKBBJiAgT8O0dMm3keZHpP3woipDWgf4'></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUS — Intelligence Workbench</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg: #0c0d10;
+  --surface: #14161a;
+  --card: #1c1e24;
+  --border: #2a2d35;
+  --text: #e4e4e7;
+  --muted: #71717a;
+  --accent: #3b82f6;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --pink: #ec4899;
+  --purple: #8b5cf6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+/* HEADER */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.logo { font-weight: 700; font-size: 15px; color: var(--accent); }
+
+.nav-tabs { display: flex; gap: 2px; flex: 1; }
+.nav-tab {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.nav-tab:hover { background: var(--card); color: var(--text); }
+.nav-tab.active { background: var(--accent); color: white; }
+
+.header-actions { display: flex; gap: 6px; }
+
+.btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+}
+.btn:hover { background: var(--border); }
+.btn-primary { background: var(--accent); border-color: var(--accent); }
+.btn-sm { padding: 4px 8px; font-size: 11px; }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+/* MAIN */
+main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.panel:last-child { border-right: none; }
+
+.panel-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.panel-title { font-weight: 600; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-content { flex: 1; overflow-y: auto; padding: 10px; }
+
+/* TABS CONTENT */
+.tab-content { display: none; flex: 1; overflow: hidden; }
+.tab-content.active { display: flex; }
+
+/* ENTITIES VIEW */
+.entities-view { display: flex; flex: 1; }
+.entity-list-panel { width: 280px; }
+.entity-detail-panel { flex: 1; display: flex; flex-direction: column; }
+
+.entity-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.entity-item:hover { border-color: var(--accent); }
+.entity-item.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+.entity-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+.entity-meta { font-size: 11px; color: var(--muted); display: flex; gap: 8px; }
+
+.entity-type {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.type-person { background: rgba(59,130,246,0.2); color: #60a5fa; }
+.type-org { background: rgba(139,92,246,0.2); color: #a78bfa; }
+.type-place { background: rgba(34,197,94,0.2); color: #4ade80; }
+.type-event { background: rgba(245,158,11,0.2); color: #fbbf24; }
+.type-object { background: rgba(236,72,153,0.2); color: #f472b6; }
+.type-document { background: rgba(113,113,122,0.2); color: #a1a1aa; }
+
+.tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.tag { font-size: 10px; padding: 2px 6px; background: var(--border); border-radius: 3px; color: var(--muted); }
+
+/* DETAIL VIEW */
+.detail-scroll { flex: 1; overflow-y: auto; padding: 16px; }
+.detail-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px; }
+.detail-title { font-size: 20px; font-weight: 600; }
+.detail-subtitle { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+.section { margin-bottom: 20px; }
+.section-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+
+.field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.field { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 8px 10px; }
+.field-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.field-value { font-size: 13px; word-break: break-word; }
+
+.note-item { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 10px; margin-bottom: 6px; }
+.note-header { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+.note-content { font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+.note-encrypted { color: var(--amber); cursor: pointer; }
+
+.relation-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 5px; margin-bottom: 4px; cursor: pointer; }
+.relation-item:hover { border-color: var(--accent); }
+.relation-type { font-size: 11px; color: var(--muted); min-width: 80px; }
+.relation-target { flex: 1; font-weight: 500; }
+
+.file-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 5px; margin-bottom: 4px; }
+.file-icon { font-size: 18px; }
+.file-info { flex: 1; }
+.file-name { font-size: 12px; font-weight: 500; }
+.file-meta { font-size: 10px; color: var(--muted); }
+
+/* IMPORT VIEW */
+.import-view { flex: 1; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
+
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(59,130,246,0.05); }
+.drop-zone h3 { margin-bottom: 8px; }
+.drop-zone p { color: var(--muted); font-size: 12px; }
+
+.format-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 12px; }
+.format-tag { font-size: 11px; padding: 4px 8px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; text-align: center; }
+
+.import-preview { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-top: 12px; }
+.import-preview h4 { margin-bottom: 8px; }
+.import-preview pre { font-size: 11px; max-height: 200px; overflow: auto; background: var(--surface); padding: 8px; border-radius: 4px; }
+
+/* TOOLS VIEW */
+.tools-view { flex: 1; display: flex; overflow: hidden; }
+.tools-sidebar { width: 200px; background: var(--surface); border-right: 1px solid var(--border); padding: 8px; }
+.tools-content { flex: 1; overflow-y: auto; padding: 16px; }
+
+.tool-nav-item {
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-bottom: 2px;
+  transition: all 0.15s;
+}
+.tool-nav-item:hover { background: var(--card); }
+.tool-nav-item.active { background: var(--accent); color: white; }
+
+.tool-section { display: none; }
+.tool-section.active { display: block; }
+
+.tool-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 12px; }
+.tool-card h3 { font-size: 14px; margin-bottom: 12px; }
+
+textarea.tool-input, input.tool-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  border-radius: 5px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 12px;
+  resize: vertical;
+}
+textarea.tool-input { min-height: 100px; }
+textarea.tool-input:focus, input.tool-input:focus { outline: none; border-color: var(--accent); }
+
+.tool-output { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 10px; margin-top: 10px; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; }
+
+.tool-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.tool-row .btn { flex-shrink: 0; }
+
+/* SEARCH VIEW */
+.search-view { flex: 1; display: flex; flex-direction: column; padding: 16px; }
+.search-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+.search-bar input { flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 6px; font-size: 14px; }
+.search-bar input:focus { outline: none; border-color: var(--accent); }
+.search-results { flex: 1; overflow-y: auto; }
+.search-result { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; cursor: pointer; }
+.search-result:hover { border-color: var(--accent); }
+.search-result-title { font-weight: 600; margin-bottom: 4px; }
+.search-result-context { font-size: 12px; color: var(--muted); }
+.search-result-context mark { background: var(--amber); color: black; padding: 0 2px; border-radius: 2px; }
+
+/* TIMELINE VIEW */
+.timeline-view { flex: 1; overflow-y: auto; padding: 16px; }
+.timeline-item { display: flex; gap: 12px; padding-bottom: 16px; position: relative; }
+.timeline-item::before { content: ""; position: absolute; left: 9px; top: 20px; bottom: 0; width: 2px; background: var(--border); }
+.timeline-item:last-child::before { display: none; }
+.timeline-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.timeline-content { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+.timeline-date { font-size: 12px; color: var(--accent); font-weight: 500; margin-bottom: 4px; }
+.timeline-title { font-weight: 600; margin-bottom: 4px; }
+.timeline-desc { font-size: 12px; color: var(--muted); }
+
+/* GRAPH VIEW */
+.graph-view { flex: 1; position: relative; }
+#graphCanvas { width: 100%; height: 100%; }
+.graph-controls { position: absolute; bottom: 12px; left: 12px; display: flex; gap: 4px; }
+
+/* MODALS */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-lg { max-width: 700px; }
+
+.modal-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-title { font-weight: 600; }
+.modal-close { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+.modal-close:hover { color: var(--text); }
+
+.modal-body { padding: 16px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: inherit;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
+.form-group textarea { min-height: 80px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.checkbox-row { display: flex; align-items: center; gap: 8px; }
+.checkbox-row input { width: auto; }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 40px; color: var(--muted); }
+.empty-state h3 { color: var(--text); margin-bottom: 8px; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 9999;
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* FILTERS */
+.filter-row { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+.filter-btn { padding: 4px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--muted); }
+.filter-btn:hover { border-color: var(--muted); color: var(--text); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">◈ NEXUS</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="entities">Entités</button>
+    <button class="nav-tab" data-tab="timeline">Timeline</button>
+    <button class="nav-tab" data-tab="graph">Graphe</button>
+    <button class="nav-tab" data-tab="search">Recherche</button>
+    <button class="nav-tab" data-tab="import">Import</button>
+    <button class="nav-tab" data-tab="tools">Outils</button>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="exportAll()">📤 Export</button>
+    <button class="btn" onclick="lockDB()">🔒</button>
+  </div>
+</header>
+
+<main>
+  <!-- ENTITIES TAB -->
+  <div class="tab-content active" id="tabEntities">
+    <div class="entities-view">
+      <div class="panel entity-list-panel">
+        <div class="panel-header">
+          <span class="panel-title">Entités</span>
+          <button class="btn btn-sm" onclick="openEntityModal()">+</button>
+        </div>
+        <div style="padding:8px;border-bottom:1px solid var(--border)">
+          <input type="text" id="entitySearch" placeholder="Rechercher..." style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:12px">
+          <div class="filter-row" style="margin-top:6px">
+            <button class="filter-btn active" data-type="all">Tout</button>
+            <button class="filter-btn" data-type="person">👤</button>
+            <button class="filter-btn" data-type="org">🏢</button>
+            <button class="filter-btn" data-type="place">📍</button>
+            <button class="filter-btn" data-type="event">📅</button>
+            <button class="filter-btn" data-type="object">📦</button>
+            <button class="filter-btn" data-type="document">📄</button>
+          </div>
+        </div>
+        <div class="panel-content" id="entityList"></div>
+      </div>
+      <div class="panel entity-detail-panel">
+        <div class="detail-scroll" id="entityDetail">
+          <div class="empty-state">
+            <h3>Aucune entité sélectionnée</h3>
+            <p>Sélectionnez ou créez une entité.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE TAB -->
+  <div class="tab-content" id="tabTimeline">
+    <div class="timeline-view" id="timelineContainer">
+      <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+        <h2 style="font-size:16px">Chronologie</h2>
+        <button class="btn" onclick="openEventModal()">+ Événement</button>
+      </div>
+      <div id="timelineList"></div>
+    </div>
+  </div>
+
+  <!-- GRAPH TAB -->
+  <div class="tab-content" id="tabGraph">
+    <div class="graph-view">
+      <canvas id="graphCanvas"></canvas>
+      <div class="graph-controls">
+        <button class="btn btn-sm" onclick="resetGraph()">⟲</button>
+        <button class="btn btn-sm" onclick="zoomGraph(1.2)">+</button>
+        <button class="btn btn-sm" onclick="zoomGraph(0.8)">−</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH TAB -->
+  <div class="tab-content" id="tabSearch">
+    <div class="search-view">
+      <div class="search-bar">
+        <input type="text" id="globalSearchInput" placeholder="Recherche globale (texte ou /regex/)...">
+        <button class="btn" onclick="performSearch()">Rechercher</button>
+      </div>
+      <div class="search-results" id="searchResults">
+        <div class="empty-state"><p>Entrez un terme de recherche</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT TAB -->
+  <div class="tab-content" id="tabImport">
+    <div class="import-view">
+      <div class="drop-zone" id="dropZone">
+        <h3>📁 Glissez vos fichiers ici</h3>
+        <p>ou cliquez pour sélectionner</p>
+        <div class="format-grid">
+          <span class="format-tag">JSON</span>
+          <span class="format-tag">CSV/TSV</span>
+          <span class="format-tag">XLSX</span>
+          <span class="format-tag">VCF</span>
+          <span class="format-tag">Markdown</span>
+          <span class="format-tag">HTML</span>
+          <span class="format-tag">TXT</span>
+          <span class="format-tag">Images</span>
+        </div>
+      </div>
+      <input type="file" id="fileInput" multiple accept=".json,.csv,.tsv,.xlsx,.xls,.vcf,.md,.html,.htm,.txt,.jpg,.jpeg,.png,.gif,.webp,.pdf,.eml">
+      
+      <div class="tool-card">
+        <h3>Import rapide - Texte brut</h3>
+        <textarea id="pasteImport" class="tool-input" placeholder="Collez du texte, JSON, CSV, emails, contacts... L'extraction automatique détectera les entités."></textarea>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn" onclick="parseRawText()">🔍 Extraire les entités</button>
+          <button class="btn" onclick="importAsNote()">📝 Importer comme note</button>
+        </div>
+      </div>
+      
+      <div id="importPreview"></div>
+    </div>
+  </div>
+
+  <!-- TOOLS TAB -->
+  <div class="tab-content" id="tabTools">
+    <div class="tools-view">
+      <div class="tools-sidebar">
+        <div class="tool-nav-item active" data-tool="extract">🔍 Extraction</div>
+        <div class="tool-nav-item" data-tool="crypto">🔐 Crypto</div>
+        <div class="tool-nav-item" data-tool="osint">🌐 OSINT</div>
+        <div class="tool-nav-item" data-tool="convert">🔄 Conversion</div>
+        <div class="tool-nav-item" data-tool="hash">🔢 Hash</div>
+        <div class="tool-nav-item" data-tool="export">📤 Export</div>
+      </div>
+      <div class="tools-content">
+        
+        <!-- EXTRACTION -->
+        <div class="tool-section active" id="toolExtract">
+          <div class="tool-card">
+            <h3>Extraction d'entités</h3>
+            <textarea id="extractInput" class="tool-input" placeholder="Collez du texte pour extraire automatiquement : emails, téléphones, URLs, dates, adresses IP, coordonnées GPS, noms propres..."></textarea>
+            <div style="margin-top:10px"><button class="btn" onclick="extractEntities()">Extraire</button></div>
+            <div class="tool-output" id="extractOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Recherche Regex</h3>
+            <div class="tool-row">
+              <input type="text" class="tool-input" id="regexPattern" placeholder="Pattern regex (ex: /\b[A-Z]{2}\d{6}\b/gi)">
+            </div>
+            <textarea id="regexInput" class="tool-input" placeholder="Texte à analyser..."></textarea>
+            <div style="margin-top:10px"><button class="btn" onclick="searchRegex()">Rechercher</button></div>
+            <div class="tool-output" id="regexOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Analyse de fréquence</h3>
+            <textarea id="freqInput" class="tool-input" placeholder="Texte à analyser..."></textarea>
+            <div style="margin-top:10px"><button class="btn" onclick="analyzeFrequency()">Analyser</button></div>
+            <div class="tool-output" id="freqOutput" style="display:none"></div>
+          </div>
+        </div>
+        
+        <!-- CRYPTO -->
+        <div class="tool-section" id="toolCrypto">
+          <div class="tool-card">
+            <h3>Chiffrement AES-256-GCM</h3>
+            <textarea id="cryptoInput" class="tool-input" placeholder="Texte à chiffrer/déchiffrer..."></textarea>
+            <div class="tool-row" style="margin-top:10px">
+              <input type="password" class="tool-input" id="cryptoPassword" placeholder="Mot de passe">
+              <button class="btn" onclick="encryptAES()">🔒 Chiffrer</button>
+              <button class="btn" onclick="decryptAES()">🔓 Déchiffrer</button>
+            </div>
+            <div class="tool-output" id="cryptoOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Générateur de mots de passe</h3>
+            <div class="tool-row">
+              <input type="number" class="tool-input" id="pwdLength" value="24" min="8" max="128" style="width:80px">
+              <button class="btn" onclick="generatePassword()">Générer</button>
+            </div>
+            <div class="checkbox-row" style="margin-top:8px">
+              <input type="checkbox" id="pwdSpecial" checked> <label for="pwdSpecial">Caractères spéciaux</label>
+            </div>
+            <div class="tool-output" id="pwdOutput" style="display:none"></div>
+          </div>
+        </div>
+        
+        <!-- OSINT -->
+        <div class="tool-section" id="toolOsint">
+          <div class="tool-card">
+            <h3>Extracteur EXIF</h3>
+            <input type="file" id="exifInput" accept="image/*">
+            <div class="drop-zone" style="padding:20px;margin:0" onclick="document.getElementById('exifInput').click()">
+              <p>Cliquez ou déposez une image</p>
+            </div>
+            <div class="tool-output" id="exifOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Parseur d'URL</h3>
+            <input type="text" class="tool-input" id="urlInput" placeholder="https://example.com/path?param=value">
+            <div style="margin-top:10px"><button class="btn" onclick="parseURL()">Analyser</button></div>
+            <div class="tool-output" id="urlOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Convertisseur GPS</h3>
+            <input type="text" class="tool-input" id="gpsInput" placeholder="50.8466, 4.3528 ou 50°50'47.8N 4°21'10.1E">
+            <div style="margin-top:10px">
+              <button class="btn" onclick="convertGPS()">Convertir</button>
+              <button class="btn" onclick="openMaps()">📍 Ouvrir Maps</button>
+            </div>
+            <div class="tool-output" id="gpsOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Générateur Google Dorks</h3>
+            <div class="form-row" style="margin-bottom:10px">
+              <input type="text" class="tool-input" id="dorkSite" placeholder="site (ex: linkedin.com)">
+              <input type="text" class="tool-input" id="dorkKeyword" placeholder="mot-clé">
+            </div>
+            <div class="tool-row">
+              <select class="tool-input" id="dorkType" style="width:auto">
+                <option value="basic">Basique</option>
+                <option value="files">Documents</option>
+                <option value="social">Réseaux sociaux</option>
+                <option value="leaks">Fuites données</option>
+              </select>
+              <button class="btn" onclick="generateDorks()">Générer</button>
+            </div>
+            <div class="tool-output" id="dorkOutput" style="display:none"></div>
+          </div>
+        </div>
+        
+        <!-- CONVERT -->
+        <div class="tool-section" id="toolConvert">
+          <div class="tool-card">
+            <h3>Encodage / Décodage</h3>
+            <textarea id="convertInput" class="tool-input" placeholder="Texte à convertir..."></textarea>
+            <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-sm" onclick="convert('b64enc')">Base64 →</button>
+              <button class="btn btn-sm" onclick="convert('b64dec')">← Base64</button>
+              <button class="btn btn-sm" onclick="convert('urlenc')">URL Encode</button>
+              <button class="btn btn-sm" onclick="convert('urldec')">URL Decode</button>
+              <button class="btn btn-sm" onclick="convert('hex')">→ Hex</button>
+              <button class="btn btn-sm" onclick="convert('unhex')">← Hex</button>
+              <button class="btn btn-sm" onclick="convert('binary')">→ Binaire</button>
+              <button class="btn btn-sm" onclick="convert('rot13')">ROT13</button>
+              <button class="btn btn-sm" onclick="convert('reverse')">Inverser</button>
+            </div>
+            <div class="tool-output" id="convertOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Timestamps</h3>
+            <div class="tool-row">
+              <input type="text" class="tool-input" id="tsInput" placeholder="1703779200 ou 2024-12-28T12:00:00Z">
+              <button class="btn" onclick="convertTimestamp()">Convertir</button>
+            </div>
+            <div class="tool-row">
+              <button class="btn" onclick="nowTimestamp()">Timestamp actuel</button>
+            </div>
+            <div class="tool-output" id="tsOutput" style="display:none"></div>
+          </div>
+        </div>
+        
+        <!-- HASH -->
+        <div class="tool-section" id="toolHash">
+          <div class="tool-card">
+            <h3>Hash de texte</h3>
+            <textarea id="hashTextInput" class="tool-input" placeholder="Texte à hasher..."></textarea>
+            <div style="margin-top:10px"><button class="btn" onclick="hashText()">Calculer</button></div>
+            <div class="tool-output" id="hashTextOutput" style="display:none"></div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Hash de fichier</h3>
+            <input type="file" id="hashFileInput">
+            <div class="drop-zone" style="padding:20px;margin:0" onclick="document.getElementById('hashFileInput').click()">
+              <p>Cliquez ou déposez un fichier</p>
+            </div>
+            <div class="tool-output" id="hashFileOutput" style="display:none"></div>
+          </div>
+        </div>
+        
+        <!-- EXPORT -->
+        <div class="tool-section" id="toolExport">
+          <div class="tool-card">
+            <h3>Export complet</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" onclick="exportAs('json')">JSON</button>
+              <button class="btn" onclick="exportAs('csv')">CSV</button>
+              <button class="btn" onclick="exportAs('markdown')">Markdown</button>
+              <button class="btn" onclick="exportAs('html')">HTML</button>
+              <button class="btn" onclick="exportAs('graphml')">GraphML</button>
+            </div>
+          </div>
+          
+          <div class="tool-card">
+            <h3>Rapport d'investigation</h3>
+            <div class="form-group">
+              <label>Titre du rapport</label>
+              <input type="text" id="reportTitle" class="tool-input" value="Rapport d'investigation">
+            </div>
+            <button class="btn" onclick="generateReport()">📄 Générer le rapport</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ENTITY MODAL -->
+<div class="modal-overlay" id="modalEntity">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouvelle entité</span>
+      <button class="modal-close" onclick="closeModal('modalEntity')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="entityId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="entityName">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="entityType">
+            <option value="person">👤 Personne</option>
+            <option value="org">🏢 Organisation</option>
+            <option value="place">📍 Lieu</option>
+            <option value="event">📅 Événement</option>
+            <option value="object">📦 Objet</option>
+            <option value="document">📄 Document</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Alias</label>
+        <input type="text" id="entityAlias" placeholder="Séparés par des virgules">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="entityDesc"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="entityDate">
+        </div>
+        <div class="form-group">
+          <label>Tags</label>
+          <input type="text" id="entityTags" placeholder="tag1, tag2">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Données structurées (JSON)</label>
+        <textarea id="entityData" placeholder='{"email": "...", "phone": "..."}'></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalEntity')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveEntity()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- RELATION MODAL -->
+<div class="modal-overlay" id="modalRelation">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouvelle relation</span>
+      <button class="modal-close" onclick="closeModal('modalRelation')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>De</label>
+        <select id="relationFrom"></select>
+      </div>
+      <div class="form-group">
+        <label>Type de relation</label>
+        <input type="text" id="relationType" placeholder="ex: travaille pour, connaît, finance...">
+      </div>
+      <div class="form-group">
+        <label>Vers</label>
+        <select id="relationTo"></select>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="relationNotes"></textarea>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="relationBidir">
+        <label for="relationBidir">Bidirectionnelle</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalRelation')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveRelation()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="modal-overlay" id="modalNote">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouvelle note</span>
+      <button class="modal-close" onclick="closeModal('modalNote')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="noteEntityId">
+      <div class="form-group">
+        <label>Contenu</label>
+        <textarea id="noteContent" style="min-height:120px"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Source</label>
+        <input type="text" id="noteSource" placeholder="Origine de l'information">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="noteEncrypt">
+        <label for="noteEncrypt">🔒 Chiffrer (AES-256)</label>
+      </div>
+      <div class="form-group" id="notePwdGroup" style="display:none">
+        <label>Mot de passe</label>
+        <input type="password" id="notePassword">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalNote')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveNote()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div class="modal-overlay" id="modalEvent">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouvel événement</span>
+      <button class="modal-close" onclick="closeModal('modalEvent')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="eventDate">
+        </div>
+        <div class="form-group">
+          <label>Heure</label>
+          <input type="time" id="eventTime">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Titre</label>
+        <input type="text" id="eventTitle">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="eventDesc"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Entités liées</label>
+        <select id="eventEntities" multiple style="min-height:80px"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalEvent')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveEvent()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILE MODAL -->
+<div class="modal-overlay" id="modalFile">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Ajouter fichier</span>
+      <button class="modal-close" onclick="closeModal('modalFile')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fileEntityId">
+      <input type="file" id="attachFileInput">
+      <div class="drop-zone" style="padding:30px" onclick="document.getElementById('attachFileInput').click()">
+        <h3>📎 Sélectionner un fichier</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DECRYPT MODAL -->
+<div class="modal-overlay" id="modalDecrypt">
+  <div class="modal" style="max-width:350px">
+    <div class="modal-header">
+      <span class="modal-title">🔒 Déchiffrer</span>
+      <button class="modal-close" onclick="closeModal('modalDecrypt')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="decryptNoteId">
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="decryptPassword">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="decryptNoteAction()">Déchiffrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOCK MODAL -->
+<div class="modal-overlay" id="modalLock">
+  <div class="modal" style="max-width:350px">
+    <div class="modal-header">
+      <span class="modal-title">🔐 Base verrouillée</span>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Mot de passe maître</label>
+        <input type="password" id="masterPassword">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="unlockDB()">Déverrouiller</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATABASE & STATE
+// ═══════════════════════════════════════════════════════════════
+const DB_NAME = 'NexusIntelDB';
+const DB_VERSION = 1;
+let idb = null;
+
+let db = { entities: [], relations: [], notes: [], events: [], files: [], activity: [] };
+let currentEntity = null;
+let typeFilter = 'all';
+let graphZoom = 1;
+let masterKey = null;
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+init();
+
+async function init() {
+  await initIndexedDB();
+  await loadDB();
+  setupUI();
+  render();
+}
+
+function initIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => { idb = request.result; resolve(); };
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('files')) {
+        db.createObjectStore('files', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('data')) {
+        db.createObjectStore('data', { keyPath: 'key' });
+      }
+    };
+  });
+}
+
+async function loadDB() {
+  try {
+    const tx = idb.transaction('data', 'readonly');
+    const store = tx.objectStore('data');
+    const request = store.get('main');
+    const result = await new Promise(r => { request.onsuccess = () => r(request.result); });
+    if (result?.value) {
+      if (result.encrypted) {
+        document.getElementById('modalLock').classList.add('open');
+        return;
+      }
+      db = result.value;
+    }
+  } catch (e) { console.error('Load error:', e); }
+}
+
+async function saveDB() {
+  try {
+    const tx = idb.transaction('data', 'readwrite');
+    const store = tx.objectStore('data');
+    store.put({ key: 'main', value: db, encrypted: false });
+  } catch (e) { console.error('Save error:', e); }
+}
+
+function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
+
+// ═══════════════════════════════════════════════════════════════
+// UI SETUP
+// ═══════════════════════════════════════════════════════════════
+function setupUI() {
+  // Nav tabs
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab' + capitalize(tab.dataset.tab)).classList.add('active');
+      if (tab.dataset.tab === 'graph') setTimeout(renderGraph, 100);
+      if (tab.dataset.tab === 'timeline') renderTimeline();
+    };
+  });
+
+  // Entity filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      typeFilter = btn.dataset.type;
+      renderEntityList();
+    };
+  });
+
+  // Entity search
+  document.getElementById('entitySearch').oninput = renderEntityList;
+
+  // Tool nav
+  document.querySelectorAll('.tool-nav-item').forEach(item => {
+    item.onclick = () => {
+      document.querySelectorAll('.tool-nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.tool-section').forEach(s => s.classList.remove('active'));
+      item.classList.add('active');
+      document.getElementById('tool' + capitalize(item.dataset.tool)).classList.add('active');
+    };
+  });
+
+  // Note encrypt toggle
+  document.getElementById('noteEncrypt').onchange = function() {
+    document.getElementById('notePwdGroup').style.display = this.checked ? 'block' : 'none';
+  };
+
+  // Drop zone
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  
+  dropZone.onclick = () => fileInput.click();
+  dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
+  dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+  dropZone.ondrop = (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); };
+  fileInput.onchange = (e) => handleFiles(e.target.files);
+
+  // EXIF input
+  document.getElementById('exifInput').onchange = (e) => extractEXIF(e.target.files[0]);
+  
+  // Hash file input
+  document.getElementById('hashFileInput').onchange = (e) => hashFile(e.target.files[0]);
+  
+  // Attach file input
+  document.getElementById('attachFileInput').onchange = (e) => attachFile(e.target.files[0]);
+
+  // Global search enter
+  document.getElementById('globalSearchInput').onkeydown = (e) => { if (e.key === 'Enter') performSearch(); };
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); document.querySelector('[data-tab="search"]').click(); document.getElementById('globalSearchInput').focus(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openEntityModal(); }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════
+function render() {
+  renderEntityList();
+  renderTimeline();
+}
+
+function renderEntityList() {
+  const container = document.getElementById('entityList');
+  const search = document.getElementById('entitySearch').value.toLowerCase();
+  
+  let filtered = db.entities;
+  if (typeFilter !== 'all') filtered = filtered.filter(e => e.type === typeFilter);
+  if (search) filtered = filtered.filter(e => 
+    e.name.toLowerCase().includes(search) || 
+    (e.alias||'').toLowerCase().includes(search) ||
+    (e.tags||[]).some(t => t.toLowerCase().includes(search))
+  );
+
+  container.innerHTML = filtered.length ? '' : '<div class="empty-state"><p>Aucune entité</p></div>';
+  
+  filtered.forEach(e => {
+    const el = document.createElement('div');
+    el.className = 'entity-item' + (currentEntity?.id === e.id ? ' active' : '');
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <span class="entity-name">${escHtml(e.name)}</span>
+        <span class="entity-type type-${e.type}">${e.type}</span>
+      </div>
+      <div class="entity-meta">
+        <span>${db.relations.filter(r => r.from === e.id || r.to === e.id).length} liens</span>
+        <span>${db.notes.filter(n => n.entityId === e.id).length} notes</span>
+      </div>
+      ${e.tags?.length ? `<div class="tags">${e.tags.map(t => `<span class="tag">${escHtml(t)}</span>`).join('')}</div>` : ''}
+    `;
+    el.onclick = () => selectEntity(e);
+    container.appendChild(el);
+  });
+}
+
+function selectEntity(e) {
+  currentEntity = e;
+  renderEntityList();
+  renderEntityDetail(e);
+}
+
+function renderEntityDetail(e) {
+  const container = document.getElementById('entityDetail');
+  const relations = db.relations.filter(r => r.from === e.id || r.to === e.id);
+  const notes = db.notes.filter(n => n.entityId === e.id);
+  const files = db.files.filter(f => f.entityId === e.id);
+
+  let dataFields = '';
+  if (e.data) {
+    try {
+      const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+      dataFields = Object.entries(data).map(([k,v]) => `
+        <div class="field"><div class="field-label">${escHtml(k)}</div><div class="field-value">${escHtml(String(v))}</div></div>
+      `).join('');
+    } catch(err) {}
+  }
+
+  container.innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-title">${escHtml(e.name)}</div>
+        <div class="detail-subtitle">
+          <span class="entity-type type-${e.type}">${e.type}</span>
+          ${e.alias ? ` • ${escHtml(e.alias)}` : ''}
+          ${e.date ? ` • ${e.date}` : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="editEntity('${e.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEntity('${e.id}')">🗑️</button>
+      </div>
+    </div>
+
+    ${e.desc ? `<div class="section"><div class="section-title">Description</div><div style="line-height:1.6">${escHtml(e.desc).replace(/\n/g,'<br>')}</div></div>` : ''}
+    
+    ${dataFields ? `<div class="section"><div class="section-title">Données</div><div class="field-grid">${dataFields}</div></div>` : ''}
+
+    <div class="section">
+      <div class="section-title">Relations (${relations.length}) <button class="btn btn-sm" onclick="openRelationModal('${e.id}')">+</button></div>
+      ${relations.length ? relations.map(r => {
+        const isFrom = r.from === e.id;
+        const other = db.entities.find(x => x.id === (isFrom ? r.to : r.from));
+        if (!other) return '';
+        return `<div class="relation-item" onclick="selectEntity(db.entities.find(x=>x.id==='${other.id}'))">
+          <span class="relation-type">${isFrom ? '→' : '←'} ${escHtml(r.type)}</span>
+          <span class="relation-target">${escHtml(other.name)}</span>
+          <button class="btn btn-sm" onclick="event.stopPropagation();deleteRelation('${r.id}')">×</button>
+        </div>`;
+      }).join('') : '<div style="color:var(--muted);font-size:12px">Aucune relation</div>'}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Notes (${notes.length}) <button class="btn btn-sm" onclick="openNoteModal('${e.id}')">+</button></div>
+      ${notes.length ? notes.map(n => `
+        <div class="note-item">
+          <div class="note-header">
+            <span>${formatDate(n.time)}</span>
+            <div>
+              ${n.source ? `<span style="margin-right:8px">📎 ${escHtml(n.source)}</span>` : ''}
+              <button class="btn btn-sm" onclick="deleteNote('${n.id}')">×</button>
+            </div>
+          </div>
+          <div class="note-content ${n.encrypted ? 'note-encrypted' : ''}">
+            ${n.encrypted ? `<span onclick="promptDecrypt('${n.id}')">🔒 Cliquez pour déchiffrer</span>` : escHtml(n.content).replace(/\n/g,'<br>')}
+          </div>
+        </div>
+      `).join('') : '<div style="color:var(--muted);font-size:12px">Aucune note</div>'}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Fichiers (${files.length}) <button class="btn btn-sm" onclick="openFileModal('${e.id}')">+</button></div>
+      ${files.length ? files.map(f => `
+        <div class="file-item">
+          <span class="file-icon">📎</span>
+          <div class="file-info">
+            <div class="file-name">${escHtml(f.name)}</div>
+            <div class="file-meta">${formatBytes(f.size)} • ${f.type || 'unknown'}</div>
+          </div>
+          <button class="btn btn-sm" onclick="downloadFile('${f.id}')">⬇️</button>
+          <button class="btn btn-sm" onclick="deleteFile('${f.id}')">×</button>
+        </div>
+      `).join('') : '<div style="color:var(--muted);font-size:12px">Aucun fichier</div>'}
+    </div>
+  `;
+}
+
+function renderTimeline() {
+  const container = document.getElementById('timelineList');
+  const events = [...db.events].sort((a,b) => new Date(b.date) - new Date(a.date));
+  
+  container.innerHTML = events.length ? '' : '<div class="empty-state"><p>Aucun événement</p></div>';
+  
+  events.forEach(e => {
+    const linked = (e.entities||[]).map(id => db.entities.find(x => x.id === id)).filter(Boolean);
+    const el = document.createElement('div');
+    el.className = 'timeline-item';
+    el.innerHTML = `
+      <div class="timeline-dot">📅</div>
+      <div class="timeline-content" style="position:relative">
+        <div class="timeline-date">${e.date}${e.time ? ' ' + e.time : ''}</div>
+        <div class="timeline-title">${escHtml(e.title)}</div>
+        ${e.desc ? `<div class="timeline-desc">${escHtml(e.desc)}</div>` : ''}
+        ${linked.length ? `<div class="tags" style="margin-top:8px">${linked.map(x => `<span class="tag" onclick="selectEntity(db.entities.find(e=>e.id==='${x.id}'));document.querySelector('[data-tab=entities]').click()" style="cursor:pointer">${escHtml(x.name)}</span>`).join('')}</div>` : ''}
+        <button class="btn btn-sm" onclick="deleteEvent('${e.id}')" style="position:absolute;top:8px;right:8px">×</button>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ENTITY CRUD
+// ═══════════════════════════════════════════════════════════════
+function openEntityModal(id) {
+  document.getElementById('entityId').value = '';
+  document.getElementById('entityName').value = '';
+  document.getElementById('entityType').value = 'person';
+  document.getElementById('entityAlias').value = '';
+  document.getElementById('entityDesc').value = '';
+  document.getElementById('entityDate').value = '';
+  document.getElementById('entityTags').value = '';
+  document.getElementById('entityData').value = '';
+  openModal('modalEntity');
+}
+
+function editEntity(id) {
+  const e = db.entities.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('entityId').value = e.id;
+  document.getElementById('entityName').value = e.name;
+  document.getElementById('entityType').value = e.type;
+  document.getElementById('entityAlias').value = e.alias || '';
+  document.getElementById('entityDesc').value = e.desc || '';
+  document.getElementById('entityDate').value = e.date || '';
+  document.getElementById('entityTags').value = (e.tags||[]).join(', ');
+  document.getElementById('entityData').value = e.data || '';
+  openModal('modalEntity');
+}
+
+function saveEntity() {
+  const id = document.getElementById('entityId').value;
+  const entity = {
+    id: id || genId(),
+    name: document.getElementById('entityName').value.trim(),
+    type: document.getElementById('entityType').value,
+    alias: document.getElementById('entityAlias').value.trim(),
+    desc: document.getElementById('entityDesc').value.trim(),
+    date: document.getElementById('entityDate').value,
+    tags: document.getElementById('entityTags').value.split(',').map(t => t.trim()).filter(Boolean),
+    data: document.getElementById('entityData').value.trim()
+  };
+  
+  if (!entity.name) return toast('Nom requis');
+  
+  if (id) {
+    const idx = db.entities.findIndex(e => e.id === id);
+    if (idx > -1) db.entities[idx] = entity;
+  } else {
+    db.entities.push(entity);
+  }
+  
+  saveDB();
+  closeModal('modalEntity');
+  currentEntity = entity;
+  render();
+  renderEntityDetail(entity);
+  toast('Entité sauvegardée');
+}
+
+function deleteEntity(id) {
+  if (!confirm('Supprimer cette entité?')) return;
+  db.entities = db.entities.filter(e => e.id !== id);
+  db.relations = db.relations.filter(r => r.from !== id && r.to !== id);
+  db.notes = db.notes.filter(n => n.entityId !== id);
+  db.files = db.files.filter(f => f.entityId !== id);
+  currentEntity = null;
+  saveDB();
+  render();
+  document.getElementById('entityDetail').innerHTML = '<div class="empty-state"><h3>Entité supprimée</h3></div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RELATIONS
+// ═══════════════════════════════════════════════════════════════
+function openRelationModal(fromId) {
+  populateEntitySelects();
+  if (fromId) document.getElementById('relationFrom').value = fromId;
+  document.getElementById('relationType').value = '';
+  document.getElementById('relationNotes').value = '';
+  document.getElementById('relationBidir').checked = false;
+  openModal('modalRelation');
+}
+
+function populateEntitySelects() {
+  const opts = db.entities.map(e => `<option value="${e.id}">${escHtml(e.name)}</option>`).join('');
+  document.getElementById('relationFrom').innerHTML = opts;
+  document.getElementById('relationTo').innerHTML = opts;
+  document.getElementById('eventEntities').innerHTML = opts;
+}
+
+function saveRelation() {
+  const r = {
+    id: genId(),
+    from: document.getElementById('relationFrom').value,
+    type: document.getElementById('relationType').value.trim(),
+    to: document.getElementById('relationTo').value,
+    notes: document.getElementById('relationNotes').value.trim()
+  };
+  if (!r.type || r.from === r.to) return toast('Relation invalide');
+  db.relations.push(r);
+  if (document.getElementById('relationBidir').checked) {
+    db.relations.push({ id: genId(), from: r.to, type: r.type, to: r.from, notes: r.notes });
+  }
+  saveDB();
+  closeModal('modalRelation');
+  if (currentEntity) renderEntityDetail(currentEntity);
+  toast('Relation ajoutée');
+}
+
+function deleteRelation(id) {
+  db.relations = db.relations.filter(r => r.id !== id);
+  saveDB();
+  if (currentEntity) renderEntityDetail(currentEntity);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NOTES
+// ═══════════════════════════════════════════════════════════════
+function openNoteModal(entityId) {
+  document.getElementById('noteEntityId').value = entityId;
+  document.getElementById('noteContent').value = '';
+  document.getElementById('noteSource').value = '';
+  document.getElementById('noteEncrypt').checked = false;
+  document.getElementById('notePassword').value = '';
+  document.getElementById('notePwdGroup').style.display = 'none';
+  openModal('modalNote');
+}
+
+async function saveNote() {
+  const entityId = document.getElementById('noteEntityId').value;
+  let content = document.getElementById('noteContent').value.trim();
+  const encrypt = document.getElementById('noteEncrypt').checked;
+  const password = document.getElementById('notePassword').value;
+  
+  if (!content) return toast('Contenu requis');
+  if (encrypt && !password) return toast('Mot de passe requis');
+  
+  if (encrypt) {
+    content = await encryptAESText(content, password);
+  }
+  
+  db.notes.push({
+    id: genId(),
+    entityId,
+    content,
+    encrypted: encrypt,
+    source: document.getElementById('noteSource').value.trim(),
+    time: new Date().toISOString()
+  });
+  
+  saveDB();
+  closeModal('modalNote');
+  if (currentEntity) renderEntityDetail(currentEntity);
+  toast('Note ajoutée');
+}
+
+function deleteNote(id) {
+  db.notes = db.notes.filter(n => n.id !== id);
+  saveDB();
+  if (currentEntity) renderEntityDetail(currentEntity);
+}
+
+function promptDecrypt(noteId) {
+  document.getElementById('decryptNoteId').value = noteId;
+  document.getElementById('decryptPassword').value = '';
+  openModal('modalDecrypt');
+}
+
+async function decryptNoteAction() {
+  const noteId = document.getElementById('decryptNoteId').value;
+  const password = document.getElementById('decryptPassword').value;
+  const note = db.notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  try {
+    const decrypted = await decryptAESText(note.content, password);
+    closeModal('modalDecrypt');
+    alert('Contenu:\n\n' + decrypted);
+  } catch (e) {
+    toast('Mot de passe incorrect');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════════
+function openEventModal() {
+  populateEntitySelects();
+  document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('eventTime').value = '';
+  document.getElementById('eventTitle').value = '';
+  document.getElementById('eventDesc').value = '';
+  openModal('modalEvent');
+}
+
+function saveEvent() {
+  const e = {
+    id: genId(),
+    date: document.getElementById('eventDate').value,
+    time: document.getElementById('eventTime').value,
+    title: document.getElementById('eventTitle').value.trim(),
+    desc: document.getElementById('eventDesc').value.trim(),
+    entities: Array.from(document.getElementById('eventEntities').selectedOptions).map(o => o.value)
+  };
+  if (!e.date || !e.title) return toast('Date et titre requis');
+  db.events.push(e);
+  saveDB();
+  closeModal('modalEvent');
+  renderTimeline();
+  toast('Événement ajouté');
+}
+
+function deleteEvent(id) {
+  db.events = db.events.filter(e => e.id !== id);
+  saveDB();
+  renderTimeline();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILES (IndexedDB)
+// ═══════════════════════════════════════════════════════════════
+function openFileModal(entityId) {
+  document.getElementById('fileEntityId').value = entityId;
+  openModal('modalFile');
+}
+
+async function attachFile(file) {
+  if (!file) return;
+  const entityId = document.getElementById('fileEntityId').value;
+  
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const fileRecord = {
+      id: genId(),
+      entityId,
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      data: reader.result
+    };
+    
+    // Store in IndexedDB
+    const tx = idb.transaction('files', 'readwrite');
+    tx.objectStore('files').put(fileRecord);
+    
+    // Store metadata in db
+    db.files.push({ id: fileRecord.id, entityId, name: file.name, type: file.type, size: file.size });
+    saveDB();
+    
+    closeModal('modalFile');
+    if (currentEntity) renderEntityDetail(currentEntity);
+    toast('Fichier attaché');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function downloadFile(id) {
+  const tx = idb.transaction('files', 'readonly');
+  const request = tx.objectStore('files').get(id);
+  request.onsuccess = () => {
+    const file = request.result;
+    if (!file) return toast('Fichier non trouvé');
+    const a = document.createElement('a');
+    a.href = file.data;
+    a.download = file.name;
+    a.click();
+  };
+}
+
+function deleteFile(id) {
+  const tx = idb.transaction('files', 'readwrite');
+  tx.objectStore('files').delete(id);
+  db.files = db.files.filter(f => f.id !== id);
+  saveDB();
+  if (currentEntity) renderEntityDetail(currentEntity);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CRYPTO (Web Crypto API - AES-256-GCM)
+// ═══════════════════════════════════════════════════════════════
+async function deriveKey(password, salt) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptAESText(text, password) {
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
+  const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+  combined.set(salt, 0);
+  combined.set(iv, salt.length);
+  combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+  return btoa(String.fromCharCode(...combined));
+}
+
+async function decryptAESText(encrypted, password) {
+  const data = Uint8Array.from(atob(encrypted), c => c.charCodeAt(0));
+  const salt = data.slice(0, 16);
+  const iv = data.slice(16, 28);
+  const ciphertext = data.slice(28);
+  const key = await deriveKey(password, salt);
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+  return new TextDecoder().decode(decrypted);
+}
+
+async function encryptAES() {
+  const text = document.getElementById('cryptoInput').value;
+  const password = document.getElementById('cryptoPassword').value;
+  if (!text || !password) return toast('Texte et mot de passe requis');
+  try {
+    const result = await encryptAESText(text, password);
+    showOutput('cryptoOutput', result);
+  } catch (e) { toast('Erreur: ' + e.message); }
+}
+
+async function decryptAES() {
+  const text = document.getElementById('cryptoInput').value;
+  const password = document.getElementById('cryptoPassword').value;
+  if (!text || !password) return toast('Texte et mot de passe requis');
+  try {
+    const result = await decryptAESText(text, password);
+    showOutput('cryptoOutput', result);
+  } catch (e) { toast('Erreur de déchiffrement'); }
+}
+
+function generatePassword() {
+  const len = parseInt(document.getElementById('pwdLength').value) || 24;
+  const special = document.getElementById('pwdSpecial').checked;
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + (special ? '!@#$%^&*()_+-=[]{}|;:,.<>?' : '');
+  const array = new Uint32Array(len);
+  crypto.getRandomValues(array);
+  const pwd = Array.from(array, x => chars[x % chars.length]).join('');
+  showOutput('pwdOutput', pwd);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPORT
+// ═══════════════════════════════════════════════════════════════
+async function handleFiles(files) {
+  for (const file of files) {
+    await importFile(file);
+  }
+}
+
+async function importFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const text = await file.text().catch(() => null);
+  
+  let entities = [];
+  
+  if (ext === 'json') {
+    entities = parseJSON(text);
+  } else if (ext === 'csv' || ext === 'tsv') {
+    entities = parseCSV(text, ext === 'tsv' ? '\t' : ',');
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    entities = parseExcel(file);
+  } else if (ext === 'vcf') {
+    entities = parseVCF(text);
+  } else if (ext === 'md' || ext === 'txt') {
+    entities = [{ id: genId(), name: file.name, type: 'document', desc: text }];
+  } else if (ext === 'html' || ext === 'htm') {
+    entities = parseHTML(text);
+  } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+    await importImage(file);
+    return;
+  }
+  
+  if (entities.length) {
+    db.entities.push(...entities);
+    saveDB();
+    render();
+    toast(`${entities.length} entité(s) importée(s)`);
+  }
+}
+
+function parseJSON(text) {
+  try {
+    const data = JSON.parse(text);
+    if (data.entities) {
+      db.entities.push(...data.entities);
+      db.relations.push(...(data.relations || []));
+      db.notes.push(...(data.notes || []));
+      db.events.push(...(data.events || []));
+      saveDB();
+      render();
+      toast('Base importée');
+      return [];
+    }
+    const arr = Array.isArray(data) ? data : [data];
+    return arr.map((item, i) => ({
+      id: item.id || genId(),
+      name: item.name || item.title || item.label || `Item ${i+1}`,
+      type: item.type || 'object',
+      desc: item.desc || item.description || JSON.stringify(item, null, 2),
+      data: JSON.stringify(item)
+    }));
+  } catch (e) { toast('JSON invalide'); return []; }
+}
+
+function parseCSV(text, sep = ',') {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+  return lines.slice(1).map(line => {
+    const vals = line.split(sep).map(v => v.trim().replace(/^"|"$/g, ''));
+    const obj = Object.fromEntries(headers.map((h, i) => [h, vals[i] || '']));
+    return {
+      id: genId(),
+      name: obj.name || obj.Name || obj.nom || obj.title || vals[0] || 'Sans nom',
+      type: obj.type || 'object',
+      desc: obj.description || obj.desc || '',
+      data: JSON.stringify(obj)
+    };
+  });
+}
+
+async function parseExcel(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws);
+        const entities = data.map(row => ({
+          id: genId(),
+          name: row.name || row.Name || row.nom || Object.values(row)[0] || 'Sans nom',
+          type: row.type || 'object',
+          desc: row.description || row.desc || '',
+          data: JSON.stringify(row)
+        }));
+        db.entities.push(...entities);
+        saveDB();
+        render();
+        toast(`${entities.length} entrées importées`);
+      } catch (err) { toast('Erreur Excel: ' + err.message); }
+      resolve([]);
+    };
+    reader.readAsBinaryString(file);
+  });
+}
+
+function parseVCF(text) {
+  const contacts = [];
+  const vcards = text.split('BEGIN:VCARD').slice(1);
+  vcards.forEach(vcard => {
+    const lines = vcard.split('\n');
+    const contact = { id: genId(), type: 'person' };
+    const data = {};
+    lines.forEach(line => {
+      if (line.startsWith('FN:')) contact.name = line.slice(3).trim();
+      if (line.startsWith('N:')) data.n = line.slice(2).trim();
+      if (line.startsWith('TEL')) data.phone = line.split(':').pop().trim();
+      if (line.startsWith('EMAIL')) data.email = line.split(':').pop().trim();
+      if (line.startsWith('ORG:')) data.org = line.slice(4).trim();
+      if (line.startsWith('TITLE:')) data.title = line.slice(6).trim();
+      if (line.startsWith('ADR')) data.address = line.split(':').pop().replace(/;/g, ' ').trim();
+    });
+    if (contact.name) {
+      contact.data = JSON.stringify(data);
+      contacts.push(contact);
+    }
+  });
+  return contacts;
+}
+
+function parseHTML(text) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(text, 'text/html');
+  const title = doc.querySelector('title')?.textContent || 'Document HTML';
+  const body = doc.body?.textContent?.trim().slice(0, 2000) || '';
+  return [{ id: genId(), name: title, type: 'document', desc: body }];
+}
+
+async function importImage(file) {
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const entity = {
+      id: genId(),
+      name: file.name,
+      type: 'object',
+      desc: `Image: ${file.type}, ${formatBytes(file.size)}`
+    };
+    db.entities.push(entity);
+    
+    // Store file
+    const fileRecord = { id: genId(), entityId: entity.id, name: file.name, type: file.type, size: file.size, data: reader.result };
+    const tx = idb.transaction('files', 'readwrite');
+    tx.objectStore('files').put(fileRecord);
+    db.files.push({ id: fileRecord.id, entityId: entity.id, name: file.name, type: file.type, size: file.size });
+    
+    saveDB();
+    render();
+    toast('Image importée');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXTRACTION
+// ═══════════════════════════════════════════════════════════════
+function extractEntities() {
+  const text = document.getElementById('extractInput').value;
+  if (!text) return;
+  
+  const patterns = {
+    emails: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+    phones: /(?:\+\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{2,4}[-.\s]?\d{2,4}[-.\s]?\d{0,4}/g,
+    urls: /https?:\/\/[^\s<>"{}|\\^`\[\]]+/g,
+    ips: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
+    dates: /\b\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}\b|\b\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}\b/g,
+    gps: /[-+]?\d{1,3}\.\d+,\s*[-+]?\d{1,3}\.\d+/g,
+    hashtags: /#[a-zA-Z0-9_]+/g,
+    mentions: /@[a-zA-Z0-9_]+/g,
+    iban: /[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}(?:[A-Z0-9]?){0,16}/g,
+    btc: /[13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59}/g
+  };
+  
+  const results = {};
+  for (const [type, regex] of Object.entries(patterns)) {
+    const matches = [...new Set(text.match(regex) || [])];
+    if (matches.length) results[type] = matches;
+  }
+  
+  // Noms propres (capitalized words)
+  const names = [...new Set(text.match(/\b[A-Z][a-zéèêëàâäùûüîïôöç]+(?:\s+[A-Z][a-zéèêëàâäùûüîïôöç]+)+\b/g) || [])];
+  if (names.length) results.noms = names.slice(0, 50);
+  
+  let output = '';
+  for (const [type, matches] of Object.entries(results)) {
+    output += `═══ ${type.toUpperCase()} (${matches.length}) ═══\n${matches.join('\n')}\n\n`;
+  }
+  
+  showOutput('extractOutput', output || 'Aucune entité détectée');
+}
+
+function parseRawText() {
+  const text = document.getElementById('pasteImport').value;
+  if (!text) return;
+  
+  // Try JSON first
+  try {
+    const data = JSON.parse(text);
+    parseJSON(text);
+    return;
+  } catch (e) {}
+  
+  // Try CSV
+  if (text.includes(',') || text.includes('\t')) {
+    const sep = text.includes('\t') ? '\t' : ',';
+    const entities = parseCSV(text, sep);
+    if (entities.length) {
+      db.entities.push(...entities);
+      saveDB();
+      render();
+      toast(`${entities.length} entités importées`);
+      return;
+    }
+  }
+  
+  // Extract entities
+  document.getElementById('extractInput').value = text;
+  extractEntities();
+  document.querySelector('[data-tab="tools"]').click();
+}
+
+function importAsNote() {
+  const text = document.getElementById('pasteImport').value;
+  if (!text) return;
+  
+  db.notes.push({
+    id: genId(),
+    entityId: null,
+    content: text,
+    source: 'Import direct',
+    time: new Date().toISOString()
+  });
+  saveDB();
+  toast('Note ajoutée');
+  document.getElementById('pasteImport').value = '';
+}
+
+function searchRegex() {
+  const pattern = document.getElementById('regexPattern').value;
+  const text = document.getElementById('regexInput').value;
+  if (!pattern || !text) return;
+  
+  try {
+    const match = pattern.match(/^\/(.+)\/([gimsuvy]*)$/);
+    const regex = match ? new RegExp(match[1], match[2]) : new RegExp(pattern, 'gi');
+    const matches = [...text.matchAll(regex)];
+    
+    let output = `${matches.length} correspondance(s):\n\n`;
+    matches.forEach((m, i) => {
+      output += `[${i+1}] Position ${m.index}: "${m[0]}"\n`;
+    });
+    
+    showOutput('regexOutput', output);
+  } catch (e) {
+    toast('Regex invalide: ' + e.message);
+  }
+}
+
+function analyzeFrequency() {
+  const text = document.getElementById('freqInput').value;
+  if (!text) return;
+  
+  const words = text.toLowerCase().match(/\b[a-zéèêëàâäùûüîïôöç]{3,}\b/g) || [];
+  const freq = {};
+  words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+  
+  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 50);
+  let output = `Top 50 mots (${words.length} total):\n\n`;
+  sorted.forEach(([word, count], i) => {
+    output += `${(i+1).toString().padStart(2)}. ${word.padEnd(20)} ${count}\n`;
+  });
+  
+  showOutput('freqOutput', output);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OSINT TOOLS
+// ═══════════════════════════════════════════════════════════════
+function extractEXIF(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const view = new DataView(e.target.result);
+    let output = `Fichier: ${file.name}\nTaille: ${formatBytes(file.size)}\nType: ${file.type}\n\n`;
+    
+    // Basic EXIF parsing (simplified)
+    if (view.getUint16(0) === 0xFFD8) { // JPEG
+      let offset = 2;
+      while (offset < view.byteLength) {
+        if (view.getUint8(offset) !== 0xFF) break;
+        const marker = view.getUint8(offset + 1);
+        if (marker === 0xE1) { // EXIF
+          const exifData = parseEXIFData(view, offset + 4);
+          output += exifData;
+          break;
+        }
+        offset += 2 + view.getUint16(offset + 2);
+      }
+    }
+    
+    showOutput('exifOutput', output || 'Pas de données EXIF trouvées');
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseEXIFData(view, start) {
+  // Simplified EXIF parser
+  let output = '═══ DONNÉES EXIF ═══\n';
+  output += '(Parser simplifié - utilisez exiftool pour une analyse complète)\n\n';
+  output += 'Note: Pour une extraction EXIF complète, téléchargez le fichier\n';
+  output += 'et utilisez: exiftool -a -u -g1 fichier.jpg\n';
+  return output;
+}
+
+function parseURL() {
+  const input = document.getElementById('urlInput').value;
+  if (!input) return;
+  
+  try {
+    const url = new URL(input);
+    let output = `═══ ANALYSE URL ═══\n\n`;
+    output += `Protocol: ${url.protocol}\n`;
+    output += `Host: ${url.hostname}\n`;
+    output += `Port: ${url.port || '(default)'}\n`;
+    output += `Path: ${url.pathname}\n`;
+    output += `Query: ${url.search}\n`;
+    output += `Hash: ${url.hash}\n\n`;
+    
+    if (url.searchParams.toString()) {
+      output += `═══ PARAMÈTRES ═══\n`;
+      url.searchParams.forEach((v, k) => {
+        output += `${k}: ${v}\n`;
+      });
+    }
+    
+    showOutput('urlOutput', output);
+  } catch (e) {
+    toast('URL invalide');
+  }
+}
+
+function convertGPS() {
+  const input = document.getElementById('gpsInput').value;
+  if (!input) return;
+  
+  let lat, lon;
+  
+  // Try decimal format
+  const decimal = input.match(/([-+]?\d+\.?\d*)[,\s]+([-+]?\d+\.?\d*)/);
+  if (decimal) {
+    lat = parseFloat(decimal[1]);
+    lon = parseFloat(decimal[2]);
+  } else {
+    // Try DMS format
+    const dms = input.match(/(\d+)[°]\s*(\d+)['\s]*(\d+\.?\d*)["]*\s*([NS])[,\s]+(\d+)[°]\s*(\d+)['\s]*(\d+\.?\d*)["]*\s*([EW])/i);
+    if (dms) {
+      lat = parseInt(dms[1]) + parseInt(dms[2])/60 + parseFloat(dms[3])/3600;
+      if (dms[4].toUpperCase() === 'S') lat = -lat;
+      lon = parseInt(dms[5]) + parseInt(dms[6])/60 + parseFloat(dms[7])/3600;
+      if (dms[8].toUpperCase() === 'W') lon = -lon;
+    }
+  }
+  
+  if (lat !== undefined && lon !== undefined) {
+    const latDMS = decimalToDMS(lat, 'N', 'S');
+    const lonDMS = decimalToDMS(lon, 'E', 'W');
+    
+    let output = `═══ COORDONNÉES GPS ═══\n\n`;
+    output += `Décimal: ${lat.toFixed(6)}, ${lon.toFixed(6)}\n`;
+    output += `DMS: ${latDMS}, ${lonDMS}\n\n`;
+    output += `Google Maps: https://www.google.com/maps?q=${lat},${lon}\n`;
+    output += `OpenStreetMap: https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=15\n`;
+    
+    showOutput('gpsOutput', output);
+  } else {
+    toast('Format GPS non reconnu');
+  }
+}
+
+function decimalToDMS(decimal, pos, neg) {
+  const dir = decimal >= 0 ? pos : neg;
+  decimal = Math.abs(decimal);
+  const d = Math.floor(decimal);
+  const m = Math.floor((decimal - d) * 60);
+  const s = ((decimal - d) * 60 - m) * 60;
+  return `${d}°${m}'${s.toFixed(1)}"${dir}`;
+}
+
+function openMaps() {
+  const input = document.getElementById('gpsInput').value;
+  const match = input.match(/([-+]?\d+\.?\d*)[,\s]+([-+]?\d+\.?\d*)/);
+  if (match) {
+    window.open(`https://www.google.com/maps?q=${match[1]},${match[2]}`, '_blank');
+  }
+}
+
+function generateDorks() {
+  const site = document.getElementById('dorkSite').value;
+  const keyword = document.getElementById('dorkKeyword').value;
+  const type = document.getElementById('dorkType').value;
+  
+  let dorks = [];
+  
+  if (type === 'basic') {
+    if (site) dorks.push(`site:${site} "${keyword}"`);
+    dorks.push(`"${keyword}" filetype:pdf`);
+    dorks.push(`intitle:"${keyword}"`);
+    dorks.push(`inurl:"${keyword}"`);
+  } else if (type === 'files') {
+    const exts = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv'];
+    exts.forEach(ext => dorks.push(`${site ? 'site:'+site+' ' : ''}"${keyword}" filetype:${ext}`));
+  } else if (type === 'social') {
+    const sites = ['linkedin.com', 'twitter.com', 'facebook.com', 'instagram.com'];
+    sites.forEach(s => dorks.push(`site:${s} "${keyword}"`));
+  } else if (type === 'leaks') {
+    dorks.push(`"${keyword}" filetype:sql`);
+    dorks.push(`"${keyword}" filetype:log`);
+    dorks.push(`"${keyword}" filetype:env`);
+    dorks.push(`site:pastebin.com "${keyword}"`);
+    dorks.push(`site:github.com "${keyword}" password`);
+  }
+  
+  const output = dorks.map(d => `${d}\nhttps://www.google.com/search?q=${encodeURIComponent(d)}\n`).join('\n');
+  showOutput('dorkOutput', output);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONVERSION TOOLS
+// ═══════════════════════════════════════════════════════════════
+function convert(type) {
+  const input = document.getElementById('convertInput').value;
+  if (!input) return;
+  
+  let output = '';
+  try {
+    switch (type) {
+      case 'b64enc': output = btoa(unescape(encodeURIComponent(input))); break;
+      case 'b64dec': output = decodeURIComponent(escape(atob(input))); break;
+      case 'urlenc': output = encodeURIComponent(input); break;
+      case 'urldec': output = decodeURIComponent(input); break;
+      case 'hex': output = Array.from(input).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' '); break;
+      case 'unhex': output = input.split(/\s+/).map(h => String.fromCharCode(parseInt(h, 16))).join(''); break;
+      case 'binary': output = Array.from(input).map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '); break;
+      case 'rot13': output = input.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26)); break;
+      case 'reverse': output = input.split('').reverse().join(''); break;
+    }
+    showOutput('convertOutput', output);
+  } catch (e) { toast('Erreur: ' + e.message); }
+}
+
+function convertTimestamp() {
+  const input = document.getElementById('tsInput').value;
+  if (!input) return;
+  
+  let output = '';
+  const num = parseInt(input);
+  
+  if (!isNaN(num)) {
+    // Unix timestamp
+    const ms = num > 1e12 ? num : num * 1000;
+    const d = new Date(ms);
+    output = `Unix (s): ${Math.floor(ms/1000)}\nUnix (ms): ${ms}\nISO: ${d.toISOString()}\nLocal: ${d.toLocaleString()}`;
+  } else {
+    // ISO string
+    const d = new Date(input);
+    if (!isNaN(d.getTime())) {
+      output = `Unix (s): ${Math.floor(d.getTime()/1000)}\nUnix (ms): ${d.getTime()}\nISO: ${d.toISOString()}\nLocal: ${d.toLocaleString()}`;
+    }
+  }
+  
+  showOutput('tsOutput', output || 'Format non reconnu');
+}
+
+function nowTimestamp() {
+  const now = Date.now();
+  showOutput('tsOutput', `Unix (s): ${Math.floor(now/1000)}\nUnix (ms): ${now}\nISO: ${new Date().toISOString()}`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HASH
+// ═══════════════════════════════════════════════════════════════
+async function hashText() {
+  const text = document.getElementById('hashTextInput').value;
+  if (!text) return;
+  
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  
+  const [sha256, sha384, sha512] = await Promise.all([
+    crypto.subtle.digest('SHA-256', data),
+    crypto.subtle.digest('SHA-384', data),
+    crypto.subtle.digest('SHA-512', data)
+  ]);
+  
+  const toHex = (buffer) => Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  let output = `SHA-256:\n${toHex(sha256)}\n\n`;
+  output += `SHA-384:\n${toHex(sha384)}\n\n`;
+  output += `SHA-512:\n${toHex(sha512)}`;
+  
+  showOutput('hashTextOutput', output);
+}
+
+async function hashFile(file) {
+  if (!file) return;
+  
+  const buffer = await file.arrayBuffer();
+  const [sha256] = await Promise.all([
+    crypto.subtle.digest('SHA-256', buffer)
+  ]);
+  
+  const toHex = (buffer) => Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  let output = `Fichier: ${file.name}\n`;
+  output += `Taille: ${formatBytes(file.size)}\n\n`;
+  output += `SHA-256:\n${toHex(sha256)}`;
+  
+  showOutput('hashFileOutput', output);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════
+function exportAll() { exportAs('json'); }
+
+function exportAs(format) {
+  let content, filename, type;
+  
+  switch (format) {
+    case 'json':
+      content = JSON.stringify(db, null, 2);
+      filename = `nexus-${dateStr()}.json`;
+      type = 'application/json';
+      break;
+      
+    case 'csv':
+      let csv = 'id,name,type,alias,description,date,tags\n';
+      db.entities.forEach(e => {
+        csv += `"${e.id}","${(e.name||'').replace(/"/g,'""')}","${e.type}","${(e.alias||'').replace(/"/g,'""')}","${(e.desc||'').replace(/"/g,'""')}","${e.date||''}","${(e.tags||[]).join(';')}"\n`;
+      });
+      content = csv;
+      filename = `nexus-${dateStr()}.csv`;
+      type = 'text/csv';
+      break;
+      
+    case 'markdown':
+      content = generateMarkdown();
+      filename = `nexus-${dateStr()}.md`;
+      type = 'text/markdown';
+      break;
+      
+    case 'html':
+      content = generateHTMLReport();
+      filename = `nexus-${dateStr()}.html`;
+      type = 'text/html';
+      break;
+      
+    case 'graphml':
+      content = generateGraphML();
+      filename = `nexus-${dateStr()}.graphml`;
+      type = 'application/xml';
+      break;
+  }
+  
+  download(content, filename, type);
+  toast('Export terminé');
+}
+
+function generateMarkdown() {
+  let md = `# NEXUS Investigation\n\nExport: ${new Date().toISOString()}\n\n`;
+  
+  md += `## Entités (${db.entities.length})\n\n`;
+  db.entities.forEach(e => {
+    md += `### ${e.name}\n`;
+    md += `- **Type:** ${e.type}\n`;
+    if (e.alias) md += `- **Alias:** ${e.alias}\n`;
+    if (e.date) md += `- **Date:** ${e.date}\n`;
+    if (e.desc) md += `\n${e.desc}\n`;
+    md += '\n';
+  });
+  
+  md += `## Relations (${db.relations.length})\n\n`;
+  db.relations.forEach(r => {
+    const from = db.entities.find(e => e.id === r.from)?.name || r.from;
+    const to = db.entities.find(e => e.id === r.to)?.name || r.to;
+    md += `- ${from} → *${r.type}* → ${to}\n`;
+  });
+  
+  md += `\n## Timeline (${db.events.length})\n\n`;
+  db.events.sort((a,b) => new Date(a.date) - new Date(b.date)).forEach(e => {
+    md += `### ${e.date} - ${e.title}\n${e.desc || ''}\n\n`;
+  });
+  
+  return md;
+}
+
+function generateHTMLReport() {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>NEXUS Report</title>
+<style>body{font-family:system-ui;max-width:900px;margin:0 auto;padding:20px;background:#1a1a2e;color:#eee}
+h1{color:#3b82f6}h2{color:#8b5cf6;border-bottom:1px solid #333;padding-bottom:8px}
+h3{color:#22c55e}.entity{background:#252540;padding:15px;margin:10px 0;border-radius:8px;border-left:3px solid #3b82f6}
+.relation{padding:8px;background:#1e1e30;margin:5px 0;border-radius:4px}
+.meta{color:#888;font-size:12px}</style></head>
+<body><h1>◈ NEXUS Report</h1><p class="meta">Export: ${new Date().toISOString()}</p>
+<h2>Entités (${db.entities.length})</h2>
+${db.entities.map(e => `<div class="entity"><h3>${escHtml(e.name)}</h3><p class="meta">${e.type}${e.date ? ' • '+e.date : ''}</p>${e.desc ? `<p>${escHtml(e.desc)}</p>` : ''}</div>`).join('')}
+<h2>Relations (${db.relations.length})</h2>
+${db.relations.map(r => {
+  const from = db.entities.find(e => e.id === r.from)?.name || '?';
+  const to = db.entities.find(e => e.id === r.to)?.name || '?';
+  return `<div class="relation">${escHtml(from)} → <em>${escHtml(r.type)}</em> → ${escHtml(to)}</div>`;
+}).join('')}
+</body></html>`;
+}
+
+function generateGraphML() {
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<graphml xmlns="http://graphml.graphdrawing.org/xmlns">\n`;
+  xml += `<key id="label" for="node" attr.name="label" attr.type="string"/>\n`;
+  xml += `<key id="type" for="node" attr.name="type" attr.type="string"/>\n`;
+  xml += `<key id="relation" for="edge" attr.name="relation" attr.type="string"/>\n`;
+  xml += `<graph id="G" edgedefault="directed">\n`;
+  
+  db.entities.forEach(e => {
+    xml += `<node id="${e.id}"><data key="label">${escHtml(e.name)}</data><data key="type">${e.type}</data></node>\n`;
+  });
+  
+  db.relations.forEach(r => {
+    xml += `<edge source="${r.from}" target="${r.to}"><data key="relation">${escHtml(r.type)}</data></edge>\n`;
+  });
+  
+  xml += `</graph>\n</graphml>`;
+  return xml;
+}
+
+function generateReport() {
+  const title = document.getElementById('reportTitle').value || 'Rapport';
+  const content = generateHTMLReport();
+  download(content, `${title.replace(/\s+/g, '-')}.html`, 'text/html');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════════════════════
+function performSearch() {
+  const query = document.getElementById('globalSearchInput').value;
+  if (!query) return;
+  
+  const container = document.getElementById('searchResults');
+  const results = [];
+  
+  // Check if regex
+  let regex = null;
+  const regexMatch = query.match(/^\/(.+)\/([gimsuvy]*)$/);
+  if (regexMatch) {
+    try { regex = new RegExp(regexMatch[1], regexMatch[2] || 'gi'); } catch (e) {}
+  }
+  
+  const matches = (text, q) => {
+    if (!text) return { match: false };
+    if (regex) {
+      const m = text.match(regex);
+      return { match: !!m, highlights: m };
+    }
+    const lower = text.toLowerCase();
+    const idx = lower.indexOf(q.toLowerCase());
+    return { match: idx > -1, index: idx };
+  };
+  
+  // Search entities
+  db.entities.forEach(e => {
+    const fields = [e.name, e.alias, e.desc, e.data, (e.tags||[]).join(' ')].join(' ');
+    const m = matches(fields, query);
+    if (m.match) {
+      results.push({ type: 'entity', item: e, context: e.desc?.slice(0, 150) || '' });
+    }
+  });
+  
+  // Search notes
+  db.notes.forEach(n => {
+    if (n.encrypted) return;
+    const m = matches(n.content, query);
+    if (m.match) {
+      const entity = db.entities.find(e => e.id === n.entityId);
+      results.push({ type: 'note', item: n, entity, context: n.content.slice(0, 150) });
+    }
+  });
+  
+  // Search events
+  db.events.forEach(e => {
+    const fields = [e.title, e.desc].join(' ');
+    const m = matches(fields, query);
+    if (m.match) {
+      results.push({ type: 'event', item: e, context: e.desc?.slice(0, 150) || '' });
+    }
+  });
+  
+  container.innerHTML = results.length ? '' : '<div class="empty-state"><p>Aucun résultat</p></div>';
+  
+  results.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'search-result';
+    
+    let title, subtitle;
+    if (r.type === 'entity') {
+      title = r.item.name;
+      subtitle = `Entité (${r.item.type})`;
+      el.onclick = () => { selectEntity(r.item); document.querySelector('[data-tab="entities"]').click(); };
+    } else if (r.type === 'note') {
+      title = r.entity?.name || 'Note orpheline';
+      subtitle = 'Note';
+      el.onclick = () => { if (r.entity) { selectEntity(r.entity); document.querySelector('[data-tab="entities"]').click(); } };
+    } else {
+      title = r.item.title;
+      subtitle = `Événement (${r.item.date})`;
+      el.onclick = () => { document.querySelector('[data-tab="timeline"]').click(); };
+    }
+    
+    // Highlight context
+    let context = r.context;
+    if (!regex) {
+      const idx = context.toLowerCase().indexOf(query.toLowerCase());
+      if (idx > -1) {
+        context = context.slice(0, idx) + '<mark>' + context.slice(idx, idx + query.length) + '</mark>' + context.slice(idx + query.length);
+      }
+    }
+    
+    el.innerHTML = `
+      <div class="search-result-title">${escHtml(title)}</div>
+      <div style="font-size:11px;color:var(--accent);margin-bottom:4px">${subtitle}</div>
+      <div class="search-result-context">${context}...</div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GRAPH
+// ═══════════════════════════════════════════════════════════════
+function renderGraph() {
+  const canvas = document.getElementById('graphCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  canvas.width = canvas.offsetWidth * 2;
+  canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2, 2);
+  
+  const w = canvas.offsetWidth;
+  const h = canvas.offsetHeight;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#0c0d10';
+  ctx.fillRect(0, 0, w, h);
+  
+  if (!db.entities.length) {
+    ctx.fillStyle = '#71717a';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Ajoutez des entités', cx, cy);
+    return;
+  }
+  
+  const positions = {};
+  const radius = Math.min(w, h) * 0.35 * graphZoom;
+  
+  db.entities.forEach((e, i) => {
+    const angle = (i / db.entities.length) * Math.PI * 2 - Math.PI / 2;
+    positions[e.id] = {
+      x: cx + Math.cos(angle) * radius,
+      y: cy + Math.sin(angle) * radius
+    };
+  });
+  
+  // Draw edges
+  ctx.strokeStyle = '#2a2d35';
+  ctx.lineWidth = 1;
+  db.relations.forEach(r => {
+    const from = positions[r.from];
+    const to = positions[r.to];
+    if (from && to) {
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+      ctx.stroke();
+    }
+  });
+  
+  // Draw nodes
+  const colors = { person: '#3b82f6', org: '#8b5cf6', place: '#22c55e', event: '#f59e0b', object: '#ec4899', document: '#71717a' };
+  
+  db.entities.forEach(e => {
+    const pos = positions[e.id];
+    const r = 16 * graphZoom;
+    
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = colors[e.type] || '#3b82f6';
+    ctx.fill();
+    
+    if (currentEntity?.id === e.id) {
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = `${10 * graphZoom}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(e.name.slice(0, 15), pos.x, pos.y + r + 12);
+  });
+}
+
+function resetGraph() { graphZoom = 1; renderGraph(); }
+function zoomGraph(f) { graphZoom = Math.max(0.5, Math.min(2, graphZoom * f)); renderGraph(); }
+
+// ═══════════════════════════════════════════════════════════════
+// LOCK/UNLOCK
+// ═══════════════════════════════════════════════════════════════
+function lockDB() {
+  toast('Fonction de verrouillage à implémenter avec mot de passe maître');
+}
+
+function unlockDB() {
+  closeModal('modalLock');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(iso) { return iso ? new Date(iso).toLocaleString('fr-FR') : ''; }
+function formatBytes(b) { const u = ['B','KB','MB','GB']; let i = 0; while (b >= 1024 && i < u.length-1) { b /= 1024; i++; } return b.toFixed(1) + ' ' + u[i]; }
+function dateStr() { return new Date().toISOString().split('T')[0]; }
+function download(content, filename, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], {type})); a.download = filename; a.click(); }
+function showOutput(id, text) { const el = document.getElementById(id); el.textContent = text; el.style.display = 'block'; }
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
+</script>
+</body>
+</html>
